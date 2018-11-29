@@ -128,15 +128,7 @@
     <div id="all" class="tabcontent">
       <h3>전체 의뢰</h3>
       <table style="width :100%;">
-        <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
+        <thead>
           <tr>
             <th>번호</th>
             <th>제목</th>
@@ -144,36 +136,16 @@
             <th>자격요건</th>
             <th>상태</th>
           </tr>
-          <tr>
-            <td><strong>1</strong></td>
-            <td>request 1</td>
-            <td>4000000</td>
-            <td>python lv3 이상</td>
-            <td>구인중</td>
-          </tr>
-          <tr>
-            <td><strong>2</strong></td>
-            <td>request 2</td>
-            <td>8000000</td>
-            <td>java, php lv5 이상</td>
-            <td>작업중</td>
-          </tr>
+        </thead>
+        <tbody>
         </tbody>
       </table>
     </div>
-
+<!--
     <div id="engaged" class="tabcontent">
       <h3>참여 중인 의뢰</h3>
       <table style="width :100%;">
-        <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
+        <thead>
           <tr>
             <th>번호</th>
             <th>제목</th>
@@ -181,29 +153,16 @@
             <th>자격요건</th>
             <th>상태</th>
           </tr>
-          <tr>
-            <td><strong>1</strong></td>
-            <td>request 1</td>
-            <td>4000000</td>
-            <td>python lv3 이상</td>
-            <td>구인중</td>
-          </tr>
+        </thead>
+        <tbody>
         </tbody>
       </table>
-    </div>
+    </div> -->
 
     <div id="offering" class="tabcontent">
       <h3>구인 중인 의뢰</h3>
       <table style="width :100%;">
-        <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
+        <thead>
           <tr>
             <th>번호</th>
             <th>제목</th>
@@ -211,71 +170,77 @@
             <th>자격요건</th>
             <th>상태</th>
           </tr>
-          <tr>
-            <td><strong>2</strong></td>
-            <td>request 2</td>
-            <td>8000000</td>
-            <td>java, php lv5 이상</td>
-            <td>작업중</td>
-          </tr>
+        </thead>
+        <tbody>
         </tbody>
       </table>
     </div>
 
     <script>
 
-        $(function(){
-
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            var Id = url.searchParams.get("Id");
-
-            $.ajax({
-                type: 'get',
-                url: '/get_freelancer_profile/'+Id,
-                success: function(data) {
-                    console.log(data);
-                    $('#profile tbody').html("");
-                    for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<th>Id</th>'+
-                                                    '<td>'+data[i].Id+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Name</th>'+
-                                                    '<td>'+data[i].Name+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Age</th>'+
-                                                    '<td>'+data[i].Age+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Career</th>'+
-                                                    '<td>'+data[i].Career+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Major</th>'+
-                                                    '<td>'+data[i].Major+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Phone</th>'+
-                                                    '<td>'+data[i].Phone+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Score</th>'+
-                                                    '<td>'+data[i].Score+'</td>'+
-                                                '</tr>');
-                        $('#profile tbody').append(will_be_append);
-                    }
-                },
-                error: function(err) {
-                console.log(err);
+    $(function(){
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list',
+            success: function(data) {
+                $('#all tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#all tbody').append(will_be_append);
                 }
-            });
-      });
-    </script>
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        /*$.ajax({
+            type: 'get',
+            url: '/get_request_list/get_engaged_request/'+Id,
+            success: function(data) {
+                $('#engaged tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#engaged tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });*/
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_offering_request/',
+            success: function(data) {
+                $('#offering tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#offering tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+    });
 
-    <script>
     function openCity(evt, cityName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontent");
