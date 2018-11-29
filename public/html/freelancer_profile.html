@@ -54,6 +54,18 @@
             </tbody>
         </table>
 
+        <table class="table table-striped" id="language">
+            <caption>언어</caption>
+            <thead>
+                <tr>
+                    <th>Language</th>
+                    <th>level</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
         <h3>수정 삭제 버튼 넣기</h3>
 
         <table class="table table-striped" id="portfolio">
@@ -65,10 +77,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
 
@@ -81,10 +89,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
         
@@ -97,10 +101,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
 
@@ -220,6 +220,25 @@
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#apply tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/get_freelancer_profile/get_language/'+Id,
+                success: function(data) {
+                    console.log(data);
+                    $('#language tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = $('<tr>'+
+                                                    '<td>'+data[i].Language+'</td>'+
+                                                    '<td>'+data[i].Level+'</td>'+
+                                                '</tr>');
+                        $('#language tbody').append(will_be_append);
                     }
                 },
                 error: function(err) {

@@ -40,4 +40,13 @@ router.get('/get_apply_list/:Id', wrapper.asyncMiddleware(async (req, res, next)
     res.json(user);
 }));
 
+router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT Language, Level FROM freelancer_language_skill WHERE Freelancer_id='"+Id+"'");
+    //console.log('-------------------------------');
+    //console.log(JSON.stringify(user, null, 2));
+        //console.log('-------------------------------');
+    res.json(user);
+}));
+
 module.exports = router;
