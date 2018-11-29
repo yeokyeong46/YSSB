@@ -141,7 +141,7 @@
         </tbody>
       </table>
     </div>
-<!--
+
     <div id="engaged" class="tabcontent">
       <h3>참여 중인 의뢰</h3>
       <table style="width :100%;">
@@ -157,7 +157,7 @@
         <tbody>
         </tbody>
       </table>
-    </div> -->
+    </div>
 
     <div id="offering" class="tabcontent">
       <h3>구인 중인 의뢰</h3>
@@ -179,6 +179,9 @@
     <script>
 
     $(function(){
+      var url_string = window.location.href;
+      var url = new URL(url_string);
+      var Id = url.searchParams.get("Id");
         $.ajax({
             type: 'get',
             url: '/get_request_list',
@@ -186,7 +189,7 @@
                 $('#all tbody').html("");
                 for(var i = 0 ; i < data.length; i ++) {
                     var will_be_append = $('<tr>'+
-                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td><a href="request_info?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
@@ -199,14 +202,14 @@
             console.log(err);
             }
         });
-        /*$.ajax({
+        $.ajax({
             type: 'get',
             url: '/get_request_list/get_engaged_request/'+Id,
             success: function(data) {
                 $('#engaged tbody').html("");
                 for(var i = 0 ; i < data.length; i ++) {
                     var will_be_append = $('<tr>'+
-                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td><a href="request_info?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
@@ -218,7 +221,7 @@
             error: function(err) {
             console.log(err);
             }
-        });*/
+        });
         $.ajax({
             type: 'get',
             url: '/get_request_list/get_offering_request/',
@@ -226,7 +229,7 @@
                 $('#offering tbody').html("");
                 for(var i = 0 ; i < data.length; i ++) {
                     var will_be_append = $('<tr>'+
-                                                '<td><a href="#">'+data[i].Id+'</a></td>'+
+                                                '<td><a href="request_info?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
