@@ -40,5 +40,10 @@ router.get('/freelancer_profile', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/freelancer_profile.html'));
 });
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
+router.get('/request_list', (req, res, next) => {
+  res.type('html').sendFile(path.join(__dirname, '../public/html/request_list.html'));
+});
+router.get('/request_info', (req, res, next) => {
+  res.type('html').sendFile(path.join(__dirname, '../public/html/request_info.html'));
+});
 module.exports = router;
