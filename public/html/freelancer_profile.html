@@ -54,19 +54,60 @@
             </tbody>
         </table>
 
+        <div id="update_or_delete">
+            <form class="form-inline" id="update">
+                <select id="update_attr">
+                    <option value="Name">Name</option>
+                    <option value="Age">Age</option>
+                    <option value="Career">Career</option>
+                    <option value="Major">Major</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Score">Score</option>
+                </select>
+                <input type="text" class="form-control" id="update_value" placeholder="new value">
+                <input type="button" class="btn btn-default" value="UPDATE">
+            </form>
+            <form class="form-group" id="delete">
+                <input type="button" class="btn btn-default" value="DELETE"> this freelancer
+            </form>
+        </div> 
+
         <table class="table table-striped" id="language">
             <caption>언어</caption>
             <thead>
                 <tr>
                     <th>Language</th>
                     <th>level</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
 
-        <h3>수정 삭제 버튼 넣기</h3>
+        <form class="form-inline">
+            <select>
+                <option value="C">C</option>
+                <option value="C++">C++</option>
+                <option value="C#">C#</option>
+                <option value="Python">Python</option>
+                <option value="Java">Java</option>
+                <option value="Html">Html</option>
+                <option value="Javascript">Javascript</option>
+                <option value="PHP">PHP</option>
+                <option value="R">R</option>
+                <option value="Swift">Swift</option>
+                <option value="mySql">mySql</option>
+                <option value="Ruby">Ruby</option>
+            </select>
+            <input type="radio" name="skill" value="1">1
+            <input type="radio" name="skill" value="2">2
+            <input type="radio" name="skill" value="3">3
+            <input type="radio" name="skill" value="4">4
+            <input type="radio" name="skill" value="5">5
+            <input type="button" class="btn btn-default" value="ADD">
+        </form>
+
 
         <table class="table table-striped" id="portfolio">
             <caption>포트폴리오</caption>
@@ -74,11 +115,17 @@
                 <tr>
                     <th>#</th>
                     <th>context</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
+
+        <form class="form-inline">
+            <input type="text" class="form-control" id="portfolio" placeholder="Portfolio Title">
+            <input type="button" class="btn btn-default" value="ADD">
+        </form>
 
         <table class="table table-striped" id="work">
             <caption>진행중</caption>
@@ -172,6 +219,7 @@
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
                                                         '<td>'+data[i].Internal_request_id+'</td>'+
+                                                        '<td><input type="button" class="btn btn-default" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
                         }
@@ -179,6 +227,7 @@
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
                                                         '<td>'+data[i].External_file+'</td>'+
+                                                        '<td><input type="button" class="btn btn-default" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
                         }
@@ -237,6 +286,7 @@
                         var will_be_append = $('<tr>'+
                                                     '<td>'+data[i].Language+'</td>'+
                                                     '<td>'+data[i].Level+'</td>'+
+                                                    '<td><input type="button" class="btn btn-default" value="-"></td>'+
                                                 '</tr>');
                         $('#language tbody').append(will_be_append);
                     }

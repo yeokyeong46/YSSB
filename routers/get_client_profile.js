@@ -23,4 +23,13 @@ router.get('/get_request_list/:Id', wrapper.asyncMiddleware(async (req, res, nex
     res.json(user);
 }));
 
+router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const attr = req.body.attr;
+    const value = req.body.value;
+    var ret = await db.getQueryResult("UPDATE client SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
+    //var ret = await db.getQueryResult("SELECT Id  FROM client WHERE Id='"+Id+"'");
+    res.json({success: true});
+}));
+
 module.exports = router;

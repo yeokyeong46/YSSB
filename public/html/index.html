@@ -23,7 +23,18 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+    <script type="text/javascript">
+      function redirect(){
+          if (level == 0)
+            window.location = "manager_page";
+          else if (level == 1)
+            window.location = "client_profile/?Id='"+curId+"'";
+          else if (level == 2)
+            window.location = "freelancer_profile/?Id='"+curId+"'";
+          else
+            alert("authentication error");
+      }
+    </script>
   </head>
   <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -42,9 +53,10 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-              <li><a href="manager">MANAGER</a></li>
-              <li><a href="client">CLIENT</a></li>
-              <li><a href="freelancer">FREELANCER</a></li>
+              <li onclick="redirect()">MY PAGE</li>
+              <li><a href="request_list">Request List</a></li>
+              <!--<li><a href="client">CLIENT</a></li>
+              <li><a href="freelancer">FREELANCER</a></li>-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="login">LOGIN</a></li>
