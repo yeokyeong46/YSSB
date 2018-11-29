@@ -23,7 +23,7 @@
     border: none;
     color: white;
     padding: 15px 25px;
-    margin: 30px;
+    margin: 10px;
     text-align: center;
     font-size: 16px;
     cursor: pointer;
@@ -32,7 +32,8 @@
 .button:hover {
     background-color: #6A116F;
 }
-      table, th, td {
+
+     table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
       }
@@ -78,6 +79,7 @@
 }
     </style>
   </head>
+
   <nav class="navbar navbar-default">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
@@ -109,7 +111,7 @@
 
   <body>
 
-    <h3>Request List</h3>
+    <h3>  Request List</h3>
 
     <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -219,6 +221,59 @@
         </tbody>
       </table>
     </div>
+
+    <script>
+
+        $(function(){
+
+            var url_string = window.location.href;
+            var url = new URL(url_string);
+            var Id = url.searchParams.get("Id");
+
+            $.ajax({
+                type: 'get',
+                url: '/get_freelancer_profile/'+Id,
+                success: function(data) {
+                    console.log(data);
+                    $('#profile tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = $('<tr>'+
+                                                    '<th>Id</th>'+
+                                                    '<td>'+data[i].Id+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Name</th>'+
+                                                    '<td>'+data[i].Name+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Age</th>'+
+                                                    '<td>'+data[i].Age+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Career</th>'+
+                                                    '<td>'+data[i].Career+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Major</th>'+
+                                                    '<td>'+data[i].Major+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Phone</th>'+
+                                                    '<td>'+data[i].Phone+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>Score</th>'+
+                                                    '<td>'+data[i].Score+'</td>'+
+                                                '</tr>');
+                        $('#profile tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                console.log(err);
+                }
+            });
+      });
+    </script>
 
     <script>
     function openCity(evt, cityName) {
