@@ -35,4 +35,13 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     res.json({success: true});
 }));
 
+router.post('/delete', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    console.log(Id);
+    var ret = await db.getQueryResult("DELETE FROM client WHERE Id='"+Id+"'");
+    console.log(ret);
+    //var ret = await db.getQueryResult("SELECT Id  FROM client WHERE Id='"+Id+"'");
+    res.json({success: true});
+}));
+
 module.exports = router;

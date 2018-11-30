@@ -47,6 +47,9 @@
         </div><!-- /.container-fluid -->
     </nav>
     <body>
+        <div>
+            <input type="submit" class="btn btn-default" id="back" value="BACK">
+        </div>
         <h1>프리랜서 개인 프로필</h1>
 
         <table class="table table-striped" id="profile">
@@ -62,13 +65,9 @@
                     <option value="Career">Career</option>
                     <option value="Major">Major</option>
                     <option value="Phone">Phone</option>
-                    <option value="Score">Score</option>
                 </select>
                 <input type="text" class="form-control" id="update_value" placeholder="new value">
-                <input type="button" class="btn btn-default" value="UPDATE">
-            </form>
-            <form class="form-group" id="delete">
-                <input type="button" class="btn btn-default" value="DELETE"> this freelancer
+                <input type="submit" class="btn btn-default" value="UPDATE">
             </form>
         </div> 
 
@@ -85,8 +84,8 @@
             </tbody>
         </table>
 
-        <form class="form-inline">
-            <select>
+        <form class="form-inline" id="language_add">
+            <select id="new_language">
                 <option value="C">C</option>
                 <option value="C++">C++</option>
                 <option value="C#">C#</option>
@@ -105,7 +104,7 @@
             <input type="radio" name="skill" value="3">3
             <input type="radio" name="skill" value="4">4
             <input type="radio" name="skill" value="5">5
-            <input type="button" class="btn btn-default" value="ADD">
+            <input type="submit" class="btn btn-default" value="ADD">
         </form>
 
 
@@ -122,9 +121,10 @@
             </tbody>
         </table>
 
-        <form class="form-inline">
-            <input type="text" class="form-control" id="portfolio" placeholder="Portfolio Title">
-            <input type="button" class="btn btn-default" value="ADD">
+        <form class="form-inline" id="portfolio_add">
+            <input type="number" class="form-control" id="portfolio_num">
+            <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
+            <input type="submit" class="btn btn-default" value="ADD">
         </form>
 
         <table class="table table-striped" id="work">
@@ -158,12 +158,11 @@
     </body>
 
     <script>
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        var Id = url.searchParams.get("Id");
 
         $(function(){
-
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            var Id = url.searchParams.get("Id");
 
             $.ajax({
                 type: 'get',
@@ -219,7 +218,7 @@
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
                                                         '<td>'+data[i].Internal_request_id+'</td>'+
-                                                        '<td><input type="button" class="btn btn-default" value="-"></td>'+
+                                                        '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
                         }
@@ -227,7 +226,7 @@
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
                                                         '<td>'+data[i].External_file+'</td>'+
-                                                        '<td><input type="button" class="btn btn-default" value="-"></td>'+
+                                                        '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
                         }
@@ -286,7 +285,7 @@
                         var will_be_append = $('<tr>'+
                                                     '<td>'+data[i].Language+'</td>'+
                                                     '<td>'+data[i].Level+'</td>'+
-                                                    '<td><input type="button" class="btn btn-default" value="-"></td>'+
+                                                    '<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="-"></td>'+
                                                 '</tr>');
                         $('#language tbody').append(will_be_append);
                     }
@@ -296,7 +295,105 @@
                 }
             });
 
+            $('#update').submit(function(){
+                $('#update').append('<input type="hidden" name="Id" value="'+Id+'" />');
+                var v = {
+                        id: Id,
+                        attr: $("#update_attr").val(),
+                        value: $("#update_value").val()
+                    }
+                $.ajax({
+                    type: 'post',
+                    url: '/get_freelancer_profile/update',
+                    data: v,
+                    success: function(data) {
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $('#portfolio_add').submit(function(){
+                $('#portfolio_add').append('<input type="hidden" name="Id" value="'+Id+'" />');
+                var v = {
+                        id: Id,
+                        num: $("#portfolio_num").val(),
+                        title: $("#portfolio_title").val()
+                    }
+                $.ajax({
+                    type: 'post',
+                    url: '/get_freelancer_profile/add_portfolio',
+                    data: v,
+                    success: function(data) {
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $('#language_add').submit(function(){
+                $('#language_add').append('<input type="hidden" name="Id" value="'+Id+'" />');
+                var v = {
+                        id: Id,
+                        language: $("#new_language").val(),
+                        level: $('input[name="skill"]:checked').val()
+                    }
+                $.ajax({
+                    type: 'post',
+                    url: '/get_freelancer_profile/add_language',
+                    data: v,
+                    success: function(data) {
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $('#back').click(function(){
+                window.location="/manager_page?active_tab=flist";
+            });
+
         });
+
+        function delete_portfolio(Portfolio_id){
+            var v = {
+                    id: Id,
+                    portfolio_id: Portfolio_id
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_freelancer_profile/delete_portfolio",
+                data: v,
+                success: function(data) {
+                    window.location="freelancer_profile?Id="+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function delete_language(Language){
+            var v = {
+                    id: Id,
+                    language: Language
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_freelancer_profile/delete_language",
+                data: v,
+                success: function(data) {
+                    window.location="freelancer_profile?Id="+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+
     </script>
 
 </html>

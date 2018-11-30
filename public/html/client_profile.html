@@ -47,6 +47,9 @@
         </div><!-- /.container-fluid -->
     </nav>
     <body>
+        <div>
+            <input type="submit" class="btn btn-default" id="back" value="BACK">
+        </div>
         <h1>클라이언트 개인 프로필</h1>
 
         <table class="table table-striped" id="profile">
@@ -75,13 +78,9 @@
                 <select id="update_attr">
                     <option value="Name">Name</option>
                     <option value="Phone">Phone</option>
-                    <option value="Score">Score</option>
                 </select>
                 <input type="text" class="form-control" id="update_value" placeholder="new value">
                 <input type="submit" class="btn btn-default" value="UPDATE">
-            </form>
-            <form class="form-group" id="delete">
-                <input type="submit" class="btn btn-default" value="DELETE"> this client
             </form>
         </div> 
 
@@ -208,12 +207,17 @@
                     url: '/get_client_profile/update',
                     data: v,
                     success: function(data) {
+                        window.location="/client_profile?Id="+Id;
                     },
                     error: function(err) {
                         console.log(err);
                     }
                 });
-            })
+            });
+
+            $('#back').click(function(){
+                window.location="/manager_page";
+            });
 
         });
     </script>
