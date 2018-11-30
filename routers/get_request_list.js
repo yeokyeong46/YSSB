@@ -12,15 +12,6 @@ router.get('/', wrapper.asyncMiddleware(async (req, res, next) => {
   res.json(user);
 }));
 
-router.get('/get_engaged_request:Id', wrapper.asyncMiddleware(async (req, res, next) => {
-  var Id = req.params.Id;
-  var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State FROM request WHERE Client_id='"+Id+"'");
-  //console.log('-------------------------------');
-  //console.log(JSON.stringify(user, null, 2));
-	//console.log('-------------------------------');
-  res.json(user);
-}));
-
 router.get('/get_offering_request', wrapper.asyncMiddleware(async (req, res, next) => {
   var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State FROM request WHERE State='appliable'");
   //console.log('-------------------------------');

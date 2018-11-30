@@ -141,23 +141,6 @@
       </table>
     </div>
 
-    <div id="engaged" class="tabcontent">
-      <h3>참여 중인 의뢰</h3>
-      <table style="width :100%;">
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>페이</th>
-            <th>자격요건</th>
-            <th>상태</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-
     <div id="offering" class="tabcontent">
       <h3>구인 중인 의뢰</h3>
       <table style="width :100%;">
@@ -195,26 +178,6 @@
                                                 '<td>'+data[i].State+'</td>'+
                                             '</tr>');
                     $('#all tbody').append(will_be_append);
-                }
-            },
-            error: function(err) {
-            console.log(err);
-            }
-        });
-        $.ajax({
-            type: 'get',
-            url: '/get_request_list/get_engaged_request/'+Id,
-            success: function(data) {
-                $('#engaged tbody').html("");
-                for(var i = 0 ; i < data.length; i ++) {
-                    var will_be_append = $('<tr>'+
-                                                '<td><a href="request_info?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
-                                                '<td>'+data[i].Title+'</td>'+
-                                                '<td>'+data[i].Pay+'</td>'+
-                                                '<td>'+data[i].Min_career+'</td>'+
-                                                '<td>'+data[i].State+'</td>'+
-                                            '</tr>');
-                    $('#engaged tbody').append(will_be_append);
                 }
             },
             error: function(err) {
