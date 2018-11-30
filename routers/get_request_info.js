@@ -22,4 +22,12 @@ router.get('/get_worker_list/:Id', wrapper.asyncMiddleware(async (req, res, next
     res.json(user);
 }));
 
+router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT Participant_id, State FROM apply WHERE Request_id='"+Id+"'");
+    //console.log('-------------------------------');
+    //console.log(JSON.stringify(user, null, 2));
+        //console.log('-------------------------------');
+    res.json(user);
+}));
 module.exports = router;

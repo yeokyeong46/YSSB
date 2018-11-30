@@ -47,26 +47,43 @@
         </div><!-- /.container-fluid -->
     </nav>
     <body>
-        <h1>의뢰 정보</h1>
 
-        <table id="basic_info">
+        <div id="basic_info">
+          <h3>의뢰 정보</h3>
+          <table style="width :100%;" class="table table-striped">
             <tbody>
             </tbody>
-        </table>
+          </table>
+        </div>
 
         <h3>수정 삭제 버튼 넣기</h3>
+        <div id="worker">
+              <h3>참여 중인 프리랜서</h3>
+              <table style="width :100%;" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>아이디</th>
+                      <th>상태</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+        </div>
 
-        <table id="worker">
-            <caption>참여 중인 프리랜서</caption>
-            <thead>
-                <tr>
-                    <th>아이디</th>
-                    <th>상태</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div id="applier">
+              <h3>신청 중인 프리랜서</h3>
+              <table style="width :100%;" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>아이디</th>
+                      <th>상태</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+        </div>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -109,7 +126,7 @@
                                                 '<tr>'+
                                                     '<th>State</th>'+
                                                     '<td>'+data[i].State+'</td>'+
-                                                '</tr>'
+                                                '</tr>'+
                                                 '<tr>'+
                                                     '<th>Client</th>'+
                                                     '<td><a href="client_profile?Id='+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
@@ -135,6 +152,24 @@
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#worker tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/get_applier_list/'+Id,
+                success: function(data) {
+                    console.log(data);
+                    $('#applier tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = $('<tr>'+
+                                                    '<td><a href="freelancer_profile?Id='+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>'+
+                                                '</tr>');
+                        $('#applier tbody').append(will_be_append);
                     }
                 },
                 error: function(err) {
