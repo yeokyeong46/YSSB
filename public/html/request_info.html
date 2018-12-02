@@ -96,9 +96,8 @@
 
         $(function(){
 
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            var Id = url.searchParams.get("Id");
+          var path_array = window.location.pathname.split('/');
+          var Id = path_array[2];
 
             $.ajax({
                 type: 'get',
@@ -129,7 +128,7 @@
                                                 '</tr>'+
                                                 '<tr>'+
                                                     '<th>Client</th>'+
-                                                    '<td><a href="client_profile?Id='+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
+                                                    '<td><a href="client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                 '</tr>'
                                               );
                         $('#basic_info tbody').append(will_be_append);
@@ -148,7 +147,7 @@
                     $('#worker tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td><a href="freelancer_profile?Id='+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
+                                                    '<td><a href="freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#worker tbody').append(will_be_append);
@@ -166,7 +165,7 @@
                     $('#applier tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td><a href="freelancer_profile?Id='+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
+                                                    '<td><a href="freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#applier tbody').append(will_be_append);

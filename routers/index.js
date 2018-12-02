@@ -50,13 +50,13 @@ router.get('/freelancer_profile/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/freelancer_profile.html'));
 });
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-router.get('/request_list', (req, res, next) => {
+router.get('/request_list/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/request_list.html'));
 });
-router.get('/request_info', (req, res, next) => {
+router.get('/request_info/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/request_info.html'));
 });
-router.get('/view_message', (req, res, next) => {
+router.get('/view_message/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/view_message.html'));
 });
 module.exports = router;
