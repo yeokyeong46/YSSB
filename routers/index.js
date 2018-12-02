@@ -75,18 +75,23 @@ router.get('/signup', (req, res, next) => {
 router.post('/checkId', wrapper.asyncMiddleware(async (req, res, next) => {
   var id = req.body.signup_id;
 
-  var queryC = "SELECT * FROM CLIENT WHERE Id='"+id+"';";
-  var queryF = "SELECT * FROM FREELANCER WHERE Id='"+id+"';";
-
-  var resultC = await db.getQueryResult(queryC);
-  var resultF = await db.getQueryResult(queryF);
-
   var msg;
-  if(id==config.admin_config.id || Object.keys(resultC).length > 0 || Object.keys(resultF).length > 0){
-    msg = "exist";
+  if(/\s/.test(id)){
+    msg = "empty";
   }
   else{
-    msg = "new";
+    var queryC = "SELECT * FROM CLIENT WHERE Id='"+id+"';";
+    var queryF = "SELECT * FROM FREELANCER WHERE Id='"+id+"';";
+
+    var resultC = await db.getQueryResult(queryC);
+    var resultF = await db.getQueryResult(queryF);
+
+    if(id==config.admin_config.id || Object.keys(resultC).length > 0 || Object.keys(resultF).length > 0){
+      msg = "exist";
+    }
+    else{
+      msg = "new";
+    }
   }
   res.send(msg);
 }));

@@ -86,7 +86,7 @@
 
                 <div class="form-group">
                     <label for="phone">Phone Number (with '-')</label>
-                    <input type="text" class="form-control" name="signup_phone" placeholder="010-XXXX-YYYY" required>
+                    <input type="text" class="form-control" name="signup_phone" id="signup_phone" placeholder="010-XXXX-YYYY" required>
                 </div>
 
                 <div class="form-group">
@@ -103,8 +103,12 @@
 
            $(function(){
                $('#form').submit(function(){
-                   if(!flag_checkId){
+                    if(!flag_checkId){
                        alert('id 중복확인은 필수입니다.');
+                       return false;
+                    }
+                   if(!/^\d{3}-\d{3,4}-\d{4}$/.test($("#signup_phone").val())){
+                       alert("전화번호 형식을 맞춰주세요");
                        return false;
                    }
                   
@@ -119,7 +123,11 @@
                        url: '/checkId',
                        data: data,
                        success: function(result) {
-                           if(result=='new'){
+                           if(result=='empty'){
+                            $('#msg_dup_check').html("아이디에는 공백이 포함될 수 없습니다.");
+                               flag_checkId = false;
+                           }
+                           else if(result=='new'){
                                $('#msg_dup_check').html("사용 가능한 아이디입니다.");
                                flag_checkId = true;
                            }
