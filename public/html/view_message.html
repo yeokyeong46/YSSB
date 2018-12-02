@@ -52,35 +52,34 @@
         </div><!-- /.container-fluid -->
     </nav>
     <body>
-      <h3>리퀘스트 아이디 표시</h3>
-      <h3>의뢰자와 프리랜서 아이디 표시 (참여자)</h3>
-      <div>
-        <textarea id="chatLog" class="chat_log" readonly></textarea>
-      </div>
-      <form id="chat">
-        <input id="name" class="name" type="text" readonly>
-        <input id="message" class="message" type="text">
-        <input type="submit" class="chat" value="chat"/>
-      </form>
-      <div id="box" class="box">
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-      <script>
-        var socket = io();
-        $('#chat').on('submit', function(e){
-          socket.emit('send message', $('#name').val(), $('#message').val());
-          $('#message').val("");
-          $("#message").focus();
-          e.preventDefault();
-        });
-        socket.on('receive message', function(msg){
-          $('#chatLog').append(msg+"\n");
-          $('#chatLog').scrollTop($('#chatLog')[0].scrollHeight);
-        });
-        socket.on('change name', function(name){
-          $('#name').val(name);
-        });
-      </script>
+        <h3>의뢰 거부 메시지</h3>
+        <div id="message_info">
+              <h3>의뢰 정보</h3>
+              <table style="width :100%;" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>의뢰번호</th>
+                      <th>프리랜서</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+        </div>
+        <h3>메시지 보내는 창(admin, client일 때만 보이게 권한설정)</h3>
+        <div id="message">
+              <h3>메시지 로그</h3>
+              <table style="width :100%;" class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>메시지 번호</th>
+                      <th>메시지 내용</th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+        </div>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -88,5 +87,54 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
     </body>
+
+    <script>
+
+        $(function(){
+
+          var path_array = window.location.pathname.split('/');
+          var request_id = path_array[2];
+          var participant_id = path_array[3];
+          console.log(request_id+participant_id);
+
+            $.ajax({
+                type: 'get',
+                url: '/get_view_message/view_message_info/'+request_id+'/'+participant_id,
+                success: function(data) {
+                    console.log(data);
+                    $('#message_info tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = $('<tr>'+
+                                                    '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
+                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</td>'+
+                                                '</tr>');
+                        $('#message_info tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+            $.ajax({
+                type: 'get',
+                url: '/get_view_message/view_message/'+request_id+'/'+participant_id,
+                success: function(data) {
+                    console.log(data);
+                    $('#message tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = $('<tr>'+
+                                                    '<td>'+data[i].Id+'</td>'+
+                                                    '<td>'+data[i].Contents+'</td>'+
+                                                '</tr>');
+                        $('#message tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+        });
+    </script>
 
 </html>

@@ -189,7 +189,29 @@ router.get('/request_list', (req, res, next) => {
 router.get('/request_info/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/request_info.html'));
 });
-router.get('/view_message/:id', (req, res, next) => {
+router.get('/view_message/:request_id/:participant_id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/view_message.html'));
 });
+/*----------------message server-----------------
+var count=1;
+io.on('connection', function(socket){
+  console.log('user connected: ', socket.id);
+  var name = "user" + count++;
+  io.to(socket.id).emit('change name',name);
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected: ', socket.id);
+  });
+
+  socket.on('send message', function(name,text){
+    var msg = name + ' : ' + text;
+    console.log(msg);
+    io.emit('receive message', msg);
+  });
+});
+
+http.listen('3000', function(){
+  console.log("server on!");
+});
+*/
 module.exports = router;
