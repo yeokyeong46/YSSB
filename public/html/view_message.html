@@ -6,7 +6,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
         <title>yssb</title>
-
+        <style>
+          .chat_log{ width: 95%; height: 200px; }
+          .name{ width: 10%; }
+          .message{ width: 70%; }
+          .chat{ width: 10%; }
+        </style>
         <!-- 부트스트랩 -->
         <!-- 합쳐지고 최소화된 최신 CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -49,6 +54,33 @@
     <body>
       <h3>리퀘스트 아이디 표시</h3>
       <h3>의뢰자와 프리랜서 아이디 표시 (참여자)</h3>
+      <div>
+        <textarea id="chatLog" class="chat_log" readonly></textarea>
+      </div>
+      <form id="chat">
+        <input id="name" class="name" type="text" readonly>
+        <input id="message" class="message" type="text">
+        <input type="submit" class="chat" value="chat"/>
+      </form>
+      <div id="box" class="box">
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+      <script>
+        var socket = io();
+        $('#chat').on('submit', function(e){
+          socket.emit('send message', $('#name').val(), $('#message').val());
+          $('#message').val("");
+          $("#message").focus();
+          e.preventDefault();
+        });
+        socket.on('receive message', function(msg){
+          $('#chatLog').append(msg+"\n");
+          $('#chatLog').scrollTop($('#chatLog')[0].scrollHeight);
+        });
+        socket.on('change name', function(name){
+          $('#name').val(name);
+        });
+      </script>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
