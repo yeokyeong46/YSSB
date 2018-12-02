@@ -8,6 +8,7 @@ const path = require('path');
 const router = require('./router');
 const config = require('./config');
 const socket = require('./socket.io');
+const session = require('express-session');
 
 const app = express();
 
@@ -18,6 +19,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 // public 폴더를 사용하겠다 만 알면됨
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
+
+// ejs 추가
+app.set('views', __dirname + '/public/views');
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
+// session 사용
+app.use(session(config.session_config));
 
 app.use('/', router);
 
