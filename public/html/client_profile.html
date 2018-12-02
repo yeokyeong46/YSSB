@@ -179,7 +179,7 @@
                     $('#completed tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td>'+data[i].Id+'</td>'+
+                                                    '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                     '<td>'+data[i].Title+'</td>'+
                                                 '</tr>');
                         if (data[i].State == 'WORKING') {

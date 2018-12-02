@@ -220,7 +220,7 @@
                         if (data[i].Type == 0) { // internal request
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td>'+data[i].Internal_request_id+'</td>'+
+                                                        '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Internal_request_id+'</a></td>'+
                                                         '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
@@ -248,7 +248,7 @@
                     $('#work tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td>'+data[i].Request_id+'</td>'+
+                                                    '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#work tbody').append(will_be_append);
@@ -267,7 +267,7 @@
                     $('#apply tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td>'+data[i].Request_id+'</td>'+
+                                                    '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#apply tbody').append(will_be_append);
