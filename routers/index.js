@@ -113,7 +113,7 @@ router.post('/signup_client', wrapper.asyncMiddleware(async (req, res, next) => 
   var queryC = "INSERT INTO CLIENT (Id, Password, Name, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+phone+"');";
   var resultC = await db.getQueryResult(queryC);
   
-  console.log(resultC);
+  //console.log(resultC);
   
   var msg = '<script type="text/javascript">alert("새로운 클라이언트가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
@@ -121,8 +121,45 @@ router.post('/signup_client', wrapper.asyncMiddleware(async (req, res, next) => 
 }));
 
 router.get('/signup_freelancer', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/signup_freelancer.html'));
+  res.render('signup_freelancer', {
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
+  });
 });
+
+router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next) => {
+  var id = req.body.signup_id;
+  var pwd = req.body.signup_pwd;
+  var name = req.body.signup_name;
+  var age = req.body.signup_age;
+  var career = req.body.signup_career;
+  var major = req.body.signup_major;
+  var phone = req.body.signup_phone;
+  var langage = '';
+  var skill = '';
+  var ptf = req.body.signup_ptf;
+
+  var queryP1 = "SELECT * FROM PORTFOLIO WHERE Freelancer_id='"+id+"';"
+  var resultP1 = await db.getQueryResult(queryP1);
+  var num_ptf = Object.keys(resultP1).length;
+
+  var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"';";
+  var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '"+num_ptf+"', '1', '"+ptf+"';";
+
+  var resultF = await db.getQueryResult(queryF);
+  var resultP = await db.getQueryResult(queryP);
+
+  console.log('- - - - - - - - - - - - -');
+  console.log(resultF);
+  console.log('- - - - - - - - - - - - -');
+  console.log(resultP);
+  console.log('- - - - - - - - - - - - -');
+
+  var msg = '<script type="text/javascript">alert("새로운 프리랜서가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
+  res.send(msg);
+
+}));
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 router.get('/manager_page', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/manager_page.html'));
