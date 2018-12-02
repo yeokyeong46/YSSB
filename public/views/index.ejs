@@ -59,11 +59,11 @@
               <li><a href="freelancer">FREELANCER</a></li>-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <% if(sess_level == -1) { %>
+              <% if(sess_id){ %>
+                <li><a href="logout">LOG OUT</a></li>
+              <% }else{ %>
                 <li><a href="login">LOG IN</a></li>
                 <li><a href="signup">SIGN UP</a></li>
-              <% }else{ %>
-                <li><a href="logout">LOG OUT</a></li>
               <% } %>
             </ul>
           </div><!-- /.navbar-collapse -->
@@ -73,11 +73,11 @@
     <h2 class="title"> <br><br>TEAM YSSB </h2>
     <h3 class="title"> 2018-1 CSI3105-01 데이터베이스 </h3>
     <h1 class="title"> FREELANCER - CLIENT MATCHING SYSTEM </h1>
-    <% if(sess_level == -1){ %>
-        <h2 class="title"> Please Login. </h2>
-    <% } else{ %>
+      <% if(sess_id){ %>
         <h2 class="title"> Hello, <%= sess_id %> (level: <%= sess_level %>) </h2>
-    <% } %>
+      <% } else{ %>
+        <h2 class="title"> Please Login. </h2>
+      <% } %>
 
     <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

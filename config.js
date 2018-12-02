@@ -7,11 +7,15 @@ module.exports = {
     user: 'root',
 	port: 3306,
     password: '',
-    database: '',
+    database: 'no_team',
   },
   session_config: {
     secret: 'FEjfsdklewN@$(&*(F))&',
     resave: false,
     saveUninitialized: true
-   }
+  },
+  admin_config: {
+    id: 'admin',
+    pwd: 'admin'
+  }
 };
