@@ -150,18 +150,17 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script type='text/javascript'>
 
-        var flag_checkId = false;
-        var lng_num = 1;
-        var lng_idx = [];
+        var flag_checkId = false;   // 아이디 중복 확인 여부
+        var lng_num = 0;    // index를 증가시키기 위한 변수
         function add_item(){
             var base = document.createElement('div');
             base.innerHTML = document.getElementById('pre_set').innerHTML;
 
             // language 개수
-            var idx = document.getElementById("field").getElementsByTagName("div").length+1;
+            var idx = lng_num;
             var new_name_div = idx;
-            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name")+idx;
-            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name")+idx;
+            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name")+'['+idx+']';
+            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name")+'['+idx+']';
 
             base.setAttribute("name", new_name_div);
             base.getElementsByTagName("select")[0].setAttribute("name", new_name_type);
@@ -169,29 +168,24 @@
                 base.getElementsByTagName("input")[i].setAttribute("name", new_name_skill);
             }
             
-            //console.log(base);
+            console.log(base);
             document.getElementById('field').appendChild(base);
             lng_num++;
-            lng_idx.push(idx);
-            //console.log(lng_idx);
         }
   
         function remove_item(obj){
             // 지우려는 div의 아이디
             var delete_idx = Number(obj.parentNode.getAttribute("name"));
             document.getElementById('field').removeChild(obj.parentNode);
-
-            lng_num--;
-            lng_idx.splice(lng_idx.indexOf(delete_idx), 1);
-            //console.log(lng_idx);
         }
+
 
         $(function(){
             $('#form').submit(function(){
-                 if(!flag_checkId){
+                if(!flag_checkId){
                     alert('id 중복확인은 필수입니다.');
                     return false;
-                 }
+                }
                 if(!/^\d{3}-\d{3,4}-\d{4}$/.test($("#signup_phone").val())){
                     alert("전화번호 형식을 맞춰주세요");
                     return false;
