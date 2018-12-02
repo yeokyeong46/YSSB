@@ -20,44 +20,62 @@
     </head>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">YSSB</a>
-            </div>
-        
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <a class="navbar-brand" href="index">YSSB</a>
+          </div>
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-                <li class="active"><a href="manager.html">MANAGER</a></li>
-                <li><a href="client.html">CLIENT</a></li>
-                <li><a href="freelancer.html">FREELANCER</a></li>
+              <% if(sess_level==0) { %>
+              <li><a href="/manager_page">MY PAGE</a></li>
+              <% } else if (sess_level==1) { %>
+              <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
+              <% } else if (sess_level==2) { %>
+              <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
+              <% }%>
+              <li><a href="/request_list">Request List</a></li>
+              <!--<li><a href="client">CLIENT</a></li>
+              <li><a href="freelancer">FREELANCER</a></li>-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="login.html">LOGIN</a></li>
-                <li><a href="signin.html">SIGN IN</a></li>
+              <% if(sess_id){ %>
+                <li><a href="/logout">LOG OUT</a></li>
+              <% }else{ %>
+                <li><a href="/login">LOG IN</a></li>
+                <li><a href="/signup">SIGN UP</a></li>
+              <% } %>
             </ul>
-            </div><!-- /.navbar-collapse -->
+          </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
-    </nav>
+      </nav>
     <body>
+        <% if (sess_level==0) { %>
         <div>
             <input type="submit" class="btn btn-default" id="back" value="BACK">
         </div>
+        <% } %>
         <h1>프리랜서 개인 프로필</h1>
+
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+        <p>권한 테스트: 이 블럭이 나오면 본인 페이지 이거나 관리자 입니다.</p>
+        <% } %>
 
         <table class="table table-striped" id="profile">
             <tbody>
             </tbody>
         </table>
 
-        <div id="update_or_delete">
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+        <div>
             <form class="form-inline" id="update">
                 <select id="update_attr">
                     <option value="Name">Name</option>
@@ -70,6 +88,7 @@
                 <input type="submit" class="btn btn-default" value="UPDATE">
             </form>
         </div> 
+        <% } %>
 
         <table class="table table-striped" id="language">
             <caption>언어</caption>
@@ -77,13 +96,16 @@
                 <tr>
                     <th>Language</th>
                     <th>level</th>
+                    <% if (sess_level==0 || sess_id==sess_page_id) { %>
                     <th></th>
+                    <% } %>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
 
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <p>기존의 언어 레벨을 바꾸고 싶은 경우는 해당 언어를 삭제하고 다시 추가 바람</p>
         <form class="form-inline" id="language_add">
             <select id="new_language">
@@ -107,7 +129,7 @@
             <input type="radio" name="skill" value="5">5
             <input type="submit" class="btn btn-default" value="ADD">
         </form>
-
+        <% } %>
 
         <table class="table table-striped" id="portfolio">
             <caption>포트폴리오</caption>
@@ -115,19 +137,23 @@
                 <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <% if (sess_level==0 || sess_id==sess_page_id) { %>
                     <th></th>
+                    <% } %>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
 
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <p>기존 포트폴리오의 번호와 겹지치 않는 번호를 선택해야함</p>
         <form class="form-inline" id="portfolio_add">
             <input type="number" class="form-control" id="portfolio_num">
             <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
             <input type="submit" class="btn btn-default" value="ADD">
         </form>
+        <% } %>
 
         <table class="table table-striped" id="work">
             <caption>진행중</caption>
@@ -220,21 +246,20 @@
                     $('#portfolio tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         if (data[i].Type == 0) { // internal request
-                            var will_be_append = $('<tr>'+
+                            var will_be_append = '<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Title+'</a></td>'+
-                                                        '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
-                                                    '</tr>');
-                            $('#portfolio tbody').append(will_be_append);
+                                                        '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Title+'</a></td>';
                         }
                         else { // external file
-                            var will_be_append = $('<tr>'+
+                            var will_be_append = '<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td>'+data[i].Title+'</td>'+
-                                                        '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
-                                                    '</tr>');
-                            $('#portfolio tbody').append(will_be_append);
+                                                        '<td>'+data[i].Title+'</td>';
                         }
+                        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#portfolio tbody').append(will_be_append);
                     }
                 },
                 error: function(err) {
@@ -289,11 +314,14 @@
                     console.log(data);
                     $('#language tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
+                        var will_be_append = '<tr>'+
                                                     '<td>'+data[i].Language+'</td>'+
-                                                    '<td>'+data[i].Level+'</td>'+
-                                                    '<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="-"></td>'+
-                                                '</tr>');
+                                                    '<td>'+data[i].Level+'</td>';
+                        
+                        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="-"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#language tbody').append(will_be_append);
                     }
                 },

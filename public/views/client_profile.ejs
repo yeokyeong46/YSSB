@@ -20,40 +20,55 @@
     </head>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">YSSB</a>
-            </div>
-        
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <a class="navbar-brand" href="/index">YSSB</a>
+          </div>
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-                <li class="active"><a href="manager.html">MANAGER</a></li>
-                <li><a href="client.html">CLIENT</a></li>
-                <li><a href="freelancer.html">FREELANCER</a></li>
+              <% if(sess_level==0) { %>
+              <li><a href="/manager_page">MY PAGE</a></li>
+              <% } else if (sess_level==1) { %>
+              <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
+              <% } else if (sess_level==2) { %>
+              <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
+              <% }%>
+              <li><a href="/request_list">Request List</a></li>
+              <!--<li><a href="client">CLIENT</a></li>
+              <li><a href="freelancer">FREELANCER</a></li>-->
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="login.html">LOGIN</a></li>
-                <li><a href="signin.html">SIGN IN</a></li>
+              <% if(sess_id){ %>
+                <li><a href="/logout">LOG OUT</a></li>
+              <% }else{ %>
+                <li><a href="/login">LOG IN</a></li>
+                <li><a href="/signup">SIGN UP</a></li>
+              <% } %>
             </ul>
-            </div><!-- /.navbar-collapse -->
+          </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
-    </nav>
+      </nav>
     <body>
+        <% if (sess_level==0) { %>
         <div>
             <input type="submit" class="btn btn-default" id="back" value="BACK">
         </div>
+        <% } %>
+
         <h1>클라이언트 개인 프로필</h1>
         
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <p>권한 테스트: 이 블럭이 나오면 본인 페이지 이거나 관리자 입니다.</p>
-
+        <% } %>
         <table class="table table-striped" id="profile">
             <tbody>
                 <tr>
@@ -75,7 +90,8 @@
             </tbody>
         </table>
 
-        <div id="update_or_delete">
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+        <div>
             <form class="form-inline" id="update">
                 <select id="update_attr">
                     <option value="Name">Name</option>
@@ -85,6 +101,7 @@
                 <input type="submit" class="btn btn-default" value="UPDATE">
             </form>
         </div> 
+        <% } %>
 
         <table class="table table-striped" id="working">
             <caption>진행중</caption>
@@ -121,8 +138,6 @@
             <tbody>
             </tbody>
         </table>
-
-        <p>id에 a href link 걸어서 request 상세페이지로 이동</p>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -199,7 +214,6 @@
             });
 
             $('#update').submit(function(){
-                $('#update').append('<input type="hidden" name="Id" value="'+Id+'" />');
                 var v = {
                         id: Id,
                         attr: $("#update_attr").val(),
