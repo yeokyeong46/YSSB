@@ -4,12 +4,20 @@ const router = express.Router();
 const path = require('path');
 
 router.get('/', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/index.html'));
+  res.render('index', {
+    sess_level: -1,
+    sess_id: -1
+  });
+  //res.type('html').sendFile(path.join(__dirname, '../public/html/index.html'));
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 router.get('/index', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/index.html'));
+  res.render('index', {
+    sess_level: -1,
+    sess_id: -1
+  });
+  //res.type('html').sendFile(path.join(__dirname, '../public/html/index.html'));
 });
 
 router.get('/login', (req, res, next) => {
