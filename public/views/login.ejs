@@ -40,17 +40,23 @@
               <li><a href="freelancer">FREELANCER</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <% if(sess_level == -1) { %>
-                    <li><a href="login">LOGIN</a></li>
+                <% if(sess_id){ %>
                     <li><a href="logout">LOG OUT</a></li>
                 <% }else{ %>
-                    
+                    <li><a href="login">LOG IN</a></li>
+                    <li><a href="signup">SIGN UP</a></li>
                 <% } %>
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
       </nav>
   <body>
+    <% if(sess_id){ %>
+        <script type="text/javascript">
+            alert('이미 로그인한 상태입니다.');
+            window.location.href = '/';
+        </script>
+    <% } %>
 
     <div class="row">
         <div class="col-sm-4"></div>
