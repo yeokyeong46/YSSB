@@ -9,4 +9,9 @@ module.exports = {
     password: '',
     database: '',
   },
+  session: {
+    secret: 'FEjfsdklewN@$(&*(F))&QRsdfkjn',
+    resave: false,
+    saveUninitialized: true
+   }
 };
