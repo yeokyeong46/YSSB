@@ -31,16 +31,14 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     console.log(value);
     var ret = await db.getQueryResult("UPDATE client SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
     console.log(ret);
-    //var ret = await db.getQueryResult("SELECT Id  FROM client WHERE Id='"+Id+"'");
     res.json({success: true});
 }));
 
 router.post('/delete', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     console.log(Id);
-    var ret = await db.getQueryResult("DELETE FROM client WHERE Id='"+Id+"'");
+    var ret = await db.getQueryResult("DELETE FROM CLIENT WHERE Id NOT IN (SELECT DISTINCT Client_id FROM REQUEST WHERE STATE='WORKING') AND Id='"+Id+"'");
     console.log(ret);
-    //var ret = await db.getQueryResult("SELECT Id  FROM client WHERE Id='"+Id+"'");
     res.json({success: true});
 }));
 

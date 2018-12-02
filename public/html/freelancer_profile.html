@@ -114,7 +114,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>context</th>
+                    <th>Title</th>
                     <th></th>
                 </tr>
             </thead>
@@ -135,6 +135,7 @@
                 <tr>
                     <th>Request ID</th>
                     <th>Title</th>
+                    <th>State</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,6 +148,7 @@
                 <tr>
                     <th>Request ID</th>
                     <th>Title</th>
+                    <th>State</th>
                 </tr>
             </thead>
             <tbody>
@@ -220,7 +222,7 @@
                         if (data[i].Type == 0) { // internal request
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Internal_request_id+'</a></td>'+
+                                                        '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Title+'</a></td>'+
                                                         '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
@@ -228,7 +230,7 @@
                         else { // external file
                             var will_be_append = $('<tr>'+
                                                         '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td>'+data[i].External_file+'</td>'+
+                                                        '<td>'+data[i].Title+'</td>'+
                                                         '<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>'+
                                                     '</tr>');
                             $('#portfolio tbody').append(will_be_append);
@@ -249,6 +251,7 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
                                                     '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
+                                                    '<td>'+data[i].Title+'</td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#work tbody').append(will_be_append);
@@ -268,6 +271,7 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
                                                     '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
+                                                    '<td>'+data[i].Title+'</td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#apply tbody').append(will_be_append);

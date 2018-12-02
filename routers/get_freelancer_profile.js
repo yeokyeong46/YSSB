@@ -12,19 +12,19 @@ router.get('/get_profile/:Id', wrapper.asyncMiddleware(async (req, res, next) =>
 
 router.get('/get_portfolio/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Portfolio_id, Type, Internal_request_id, External_file FROM portfolio WHERE Freelancer_id='"+Id+"'");
+    var user = await db.getQueryResult("(SELECT Portfolio_id, Type, Title, Internal_request_id FROM PORTFOLIO, REQUEST WHERE Freelancer_id = '"+Id+"' AND Internal_request_id=Id) UNION (SELECT Portfolio_id, Type, External_file, Internal_request_id FROM PORTFOLIO WHERE Freelancer_id = '"+Id+"' AND Type=1) ORDER BY Portfolio_id");
     res.json(user);
 }));
 
 router.get('/get_work_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Request_id, State FROM work WHERE Participant_id='"+Id+"' AND state != 'COMPLETED'");
+    var user = await db.getQueryResult("SELECT Request_id, WORK.State, Title FROM WORK, REQUEST WHERE Participant_id='"+Id+"' AND WORK.state != 'COMPLETED' AND Request_id=Id");
     res.json(user);
 }));
 
 router.get('/get_apply_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Request_id, State FROM apply WHERE Participant_id='"+Id+"'");
+    var user = await db.getQueryResult("SELECT Request_id, APPLY.State, Title FROM APPLY, REQUEST  WHERE Participant_id='"+Id+"' AND Request_id=Id");
     res.json(user);
 }));
 
