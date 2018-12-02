@@ -23,6 +23,7 @@
     border: none;
     color: white;
     padding: 15px 25px;
+    margin: 10px;
     text-align: center;
     font-size: 16px;
     cursor: pointer;
@@ -31,7 +32,8 @@
 .button:hover {
     background-color: #6A116F;
 }
-      table, th, td {
+
+     table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
       }
@@ -77,6 +79,7 @@
 }
     </style>
   </head>
+
   <nav class="navbar navbar-default">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
@@ -108,32 +111,22 @@
 
   <body>
 
-    <h3>Request List</h3>
+    <h3>  Request List</h3>
 
     <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
     <script src="js/bootstrap.min.js"></script>
 
-    <button class="button">My page</button>
     <div class="tab">
       <button class="tablinks" onclick="openCity(event, 'all')">전체 의뢰</button>
-      <button class="tablinks" onclick="openCity(event, 'engaged')">참여 중인 의뢰</button>
       <button class="tablinks" onclick="openCity(event, 'offering')">구인 중인 의뢰</button>
     </div>
 
     <div id="all" class="tabcontent">
       <h3>전체 의뢰</h3>
       <table style="width :100%;">
-        <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
+        <thead>
           <tr>
             <th>번호</th>
             <th>제목</th>
@@ -141,50 +134,8 @@
             <th>자격요건</th>
             <th>상태</th>
           </tr>
-          <tr>
-            <td><strong>1</strong></td>
-            <td>request 1</td>
-            <td>4000000</td>
-            <td>python lv3 이상</td>
-            <td>구인중</td>
-          </tr>
-          <tr>
-            <td><strong>2</strong></td>
-            <td>request 2</td>
-            <td>8000000</td>
-            <td>java, php lv5 이상</td>
-            <td>작업중</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div id="engaged" class="tabcontent">
-      <h3>참여 중인 의뢰</h3>
-      <table style="width :100%;">
+        </thead>
         <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>페이</th>
-            <th>자격요건</th>
-            <th>상태</th>
-          </tr>
-          <tr>
-            <td><strong>1</strong></td>
-            <td>request 1</td>
-            <td>4000000</td>
-            <td>python lv3 이상</td>
-            <td>구인중</td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -192,15 +143,7 @@
     <div id="offering" class="tabcontent">
       <h3>구인 중인 의뢰</h3>
       <table style="width :100%;">
-        <tbody>
-          <colgroup>
-            <col width = "10%">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "*">
-            <col width = "15%">
-          </colgroup>
+        <thead>
           <tr>
             <th>번호</th>
             <th>제목</th>
@@ -208,18 +151,58 @@
             <th>자격요건</th>
             <th>상태</th>
           </tr>
-          <tr>
-            <td><strong>2</strong></td>
-            <td>request 2</td>
-            <td>8000000</td>
-            <td>java, php lv5 이상</td>
-            <td>작업중</td>
-          </tr>
+        </thead>
+        <tbody>
         </tbody>
       </table>
     </div>
 
     <script>
+
+    $(function(){
+
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list',
+            success: function(data) {
+                $('#all tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#all tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_offering_request/',
+            success: function(data) {
+                $('#offering tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#offering tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+    });
+
     function openCity(evt, cityName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontent");
