@@ -93,6 +93,7 @@
                   <tr>
                       <th>아이디</th>
                       <th>상태</th>
+                      <th>수락/거절</th>
                   </tr>
               </thead>
               <tbody>
@@ -185,6 +186,7 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
                                                     '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>'+
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>');
                         $('#applier tbody').append(will_be_append);
