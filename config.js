@@ -9,8 +9,8 @@ module.exports = {
     password: '',
     database: '',
   },
-  session: {
-    secret: 'FEjfsdklewN@$(&*(F))&QRsdfkjn',
+  session_config: {
+    secret: 'FEjfsdklewN@$(&*(F))&',
     resave: false,
     saveUninitialized: true
    }
