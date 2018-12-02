@@ -135,25 +135,42 @@ router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next)
   var career = req.body.signup_career;
   var major = req.body.signup_major;
   var phone = req.body.signup_phone;
-  var langage = '';
-  var skill = '';
+  var lng0 = req.body.signup_lng;
+  var lng1 = req.body.signup_lng1;
+  var lng2 = req.body.signup_lng2;
+  var skill0 = req.body.signup_skill;
+  var skill1 = req.body.signup_skill1;
+  var skill2 = req.body.signup_skill2;
   var ptf = req.body.signup_ptf;
 
+  console.log('--------------');
+  console.log(lng0);
+  console.log(lng1);
+  console.log(lng2);
+  console.log('--------------');
+  console.log(skill0);
+  console.log(skill1);
+  console.log(skill2);
+  console.log('--------------');
   var queryP1 = "SELECT * FROM PORTFOLIO WHERE Freelancer_id='"+id+"';"
   var resultP1 = await db.getQueryResult(queryP1);
-  var num_ptf = Object.keys(resultP1).length;
+  var num_ptf = Object.keys(resultP1).length+1;
 
-  var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"';";
-  var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '"+num_ptf+"', '1', '"+ptf+"';";
+  var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
+  var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '"+num_ptf+"', '1', '"+ptf+"');";
+  //var queryL = "INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+language+"', '"+skill+"');";
 
   var resultF = await db.getQueryResult(queryF);
   var resultP = await db.getQueryResult(queryP);
+  //var resultL = await db.getQueryResult(queryL);
 
   console.log('- - - - - - - - - - - - -');
   console.log(resultF);
   console.log('- - - - - - - - - - - - -');
   console.log(resultP);
   console.log('- - - - - - - - - - - - -');
+  //console.log(resultL);
+  //console.log('- - - - - - - - - - - - -');
 
   var msg = '<script type="text/javascript">alert("새로운 프리랜서가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
