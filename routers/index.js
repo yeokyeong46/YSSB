@@ -51,7 +51,7 @@ router.post('/login', wrapper.asyncMiddleware(async (req, res, next) => {
 
   if(level!=-1){
     req.session.auth_level = level;
-    req.session.curr_id = id;  
+    req.session.curr_id = id;
     res.redirect('/');
   }
   else{
@@ -112,9 +112,9 @@ router.post('/signup_client', wrapper.asyncMiddleware(async (req, res, next) => 
 
   var queryC = "INSERT INTO CLIENT (Id, Password, Name, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+phone+"');";
   var resultC = await db.getQueryResult(queryC);
-  
+
   //console.log(resultC);
-  
+
   var msg = '<script type="text/javascript">alert("새로운 클라이언트가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
 
