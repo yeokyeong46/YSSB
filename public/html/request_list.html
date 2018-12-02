@@ -160,9 +160,7 @@
     <script>
 
     $(function(){
-      var path_array = window.location.pathname.split('/');
-      var Id = path_array[2];
-      
+
         $.ajax({
             type: 'get',
             url: '/get_request_list',
@@ -170,7 +168,7 @@
                 $('#all tbody').html("");
                 for(var i = 0 ; i < data.length; i ++) {
                     var will_be_append = $('<tr>'+
-                                                '<td><a href="request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
@@ -190,7 +188,7 @@
                 $('#offering tbody').html("");
                 for(var i = 0 ; i < data.length; i ++) {
                     var will_be_append = $('<tr>'+
-                                                '<td><a href="request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
