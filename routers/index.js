@@ -164,24 +164,24 @@ router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next)
 
 router.get('/manager_page', (req,res,next) => {
   res.render('manager_page',{
-    level: req.session.auth_level,
-    id: req.session.curr_id
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
   });
 });
 
 router.get('/client_profile/:id', (req,res,next) => {
   res.render('client_profile',{
-    level: req.session.auth_level,
-    id: req.session.curr_id,
-    page_id: req.params.id
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id,
+    sess_page_id: req.params.id
   });
 });
 
 router.get('/freelancer_profile/:id', (req,res,next) => {
   res.render('freelancer_profile',{
-    level: req.session.auth_level,
-    id: req.session.curr_id,
-    page_id: req.params.id
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id,
+    sess_page_id: req.params.id
   });
 });
 
@@ -194,16 +194,16 @@ router.get('/request_list', (req, res, next) => {
 });
 router.get('/request_info/:id', (req,res,next) => {
   res.render('request_info',{
-    level: req.session.auth_level,
-    id: req.session.curr_id,
-    page_id: req.params.id
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id,
+    sess_page_id: req.params.id
   });
 });
 router.get('/view_message/:id', (req,res,next) => {
   res.render('view_message',{
-    level: req.session.auth_level,
-    id: req.session.curr_id,
-    page_id: req.params.id
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id,
+    sess_page_id: req.params.id
   });
 });
 module.exports = router;
