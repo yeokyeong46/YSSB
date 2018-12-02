@@ -94,12 +94,10 @@
 
           var path_array = window.location.pathname.split('/');
           var request_id = path_array[2];
-          var participant_id = path_array[3];
-          console.log(request_id+participant_id);
 
             $.ajax({
                 type: 'get',
-                url: '/get_view_message/view_message_info/'+request_id+'/'+participant_id,
+                url: '/get_view_message/view_message_info/'+request_id,
                 success: function(data) {
                     console.log(data);
                     $('#message_info tbody').html("");
@@ -117,7 +115,7 @@
             });
             $.ajax({
                 type: 'get',
-                url: '/get_view_message/view_message/'+request_id+'/'+participant_id,
+                url: '/get_view_message/view_message/'+request_id,
                 success: function(data) {
                     console.log(data);
                     $('#message tbody').html("");
@@ -131,7 +129,7 @@
                 },
                 error: function(err) {
                     console.log(err);
-                }
+                } 
             });
 
         });
