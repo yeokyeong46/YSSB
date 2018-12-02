@@ -47,7 +47,12 @@
         </div><!-- /.container-fluid -->
     </nav>
     <body>
+        <div>
+            <input type="submit" class="btn btn-default" id="back" value="BACK">
+        </div>
         <h1>클라이언트 개인 프로필</h1>
+        
+        <p>권한 테스트: 이 블럭이 나오면 본인 페이지 이거나 관리자 입니다.</p>
 
         <table class="table table-striped" id="profile">
             <tbody>
@@ -70,7 +75,16 @@
             </tbody>
         </table>
 
-        <h3>수정 삭제 버튼 넣기</h3>
+        <div id="update_or_delete">
+            <form class="form-inline" id="update">
+                <select id="update_attr">
+                    <option value="Name">Name</option>
+                    <option value="Phone">Phone</option>
+                </select>
+                <input type="text" class="form-control" id="update_value" placeholder="new value">
+                <input type="submit" class="btn btn-default" value="UPDATE">
+            </form>
+        </div> 
 
         <table class="table table-striped" id="working">
             <caption>진행중</caption>
@@ -81,10 +95,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
 
@@ -97,10 +107,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
 
@@ -113,10 +119,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>example title</td>
-                </tr>
             </tbody>
         </table>
 
@@ -131,14 +133,14 @@
     <script>
 
         $(function(){
+            var path_array = window.location.pathname.split('/');
+            var Id = path_array[2];
 
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            var Id = url.searchParams.get("Id");
+            console.log(Id);
 
             $.ajax({
                 type: 'get',
-                url: '/get_client_profile/'+Id,
+                url: '/get_client_profile/get_profile/'+Id,
                 success: function(data) {
                     console.log(data);
                     $('#profile tbody').html("");
@@ -194,6 +196,30 @@
                 error: function(err) {
                     console.log(err);
                 }
+            });
+
+            $('#update').submit(function(){
+                $('#update').append('<input type="hidden" name="Id" value="'+Id+'" />');
+                var v = {
+                        id: Id,
+                        attr: $("#update_attr").val(),
+                        value: $("#update_value").val()
+                    }
+                $.ajax({
+                    type: 'post',
+                    url: '/get_client_profile/update',
+                    data: v,
+                    success: function(data) {
+                        window.location="/client_profile/"+Id;
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $('#back').click(function(){
+                window.location="/manager_page";
             });
 
         });
