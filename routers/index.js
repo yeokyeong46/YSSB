@@ -23,8 +23,8 @@ router.get('/index', (req, res, next) => {
 
 router.get('/login', (req, res, next) => {
   res.render('login', {
-    sess_level: -1,
-    sess_id: -1
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
   });
 });
 
@@ -66,7 +66,10 @@ router.get('/logout', (req, res, next) => {
 });
 
 router.get('/signup', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/signup.html'));
+  res.render('signup', {
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
+  });
 });
 
 router.get('/signup_client', (req, res, next) => {
