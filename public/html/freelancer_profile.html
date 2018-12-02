@@ -160,9 +160,10 @@
     </body>
 
     <script>
-        var url_string = window.location.href;
-        var url = new URL(url_string);
-        var Id = url.searchParams.get("Id");
+        var path_array = window.location.pathname.split('/');
+        var Id = path_array[2];
+
+        console.log(Id);
 
         $(function(){
 
@@ -298,7 +299,6 @@
             });
 
             $('#update').submit(function(){
-                $('#update').append('<input type="hidden" name="Id" value="'+Id+'" />');
                 var v = {
                         id: Id,
                         attr: $("#update_attr").val(),
@@ -309,6 +309,7 @@
                     url: '/get_freelancer_profile/update',
                     data: v,
                     success: function(data) {
+                        window.location="/freelancer_profile/"+Id;
                     },
                     error: function(err) {
                         console.log(err);
@@ -317,7 +318,6 @@
             });
 
             $('#portfolio_add').submit(function(){
-                $('#portfolio_add').append('<input type="hidden" name="Id" value="'+Id+'" />');
                 var v = {
                         id: Id,
                         num: $("#portfolio_num").val(),
@@ -328,6 +328,7 @@
                     url: '/get_freelancer_profile/add_portfolio',
                     data: v,
                     success: function(data) {
+                        window.location="/freelancer_profile/"+Id;
                     },
                     error: function(err) {
                         console.log(err);
@@ -336,7 +337,6 @@
             });
 
             $('#language_add').submit(function(){
-                $('#language_add').append('<input type="hidden" name="Id" value="'+Id+'" />');
                 var v = {
                         id: Id,
                         language: $("#new_language").val(),
@@ -347,6 +347,7 @@
                     url: '/get_freelancer_profile/add_language',
                     data: v,
                     success: function(data) {
+                        window.location="/freelancer_profile/"+Id;
                     },
                     error: function(err) {
                         console.log(err);
@@ -370,7 +371,7 @@
                 url: "/get_freelancer_profile/delete_portfolio",
                 data: v,
                 success: function(data) {
-                    window.location="freelancer_profile?Id="+Id;
+                    window.location="/freelancer_profile/"+Id;
                 },
                 error: function(err) {
                     console.log(err);
@@ -388,7 +389,7 @@
                 url: "/get_freelancer_profile/delete_language",
                 data: v,
                 success: function(data) {
-                    window.location="freelancer_profile?Id="+Id;
+                    window.location="/freelancer_profile/"+Id;
                 },
                 error: function(err) {
                     console.log(err);

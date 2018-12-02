@@ -122,7 +122,7 @@
                     $('#client_table tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td><a href="client_profile?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                    '<td><a href="client_profile/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                     '<td>'+data[i].Name+'</td>'+
                                                     '<td>'+data[i].Phone+'</td>'+
                                                     '<td>'+data[i].Score+'</td>'+
@@ -143,7 +143,7 @@
                     $('#freelancer_table tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
-                                                    '<td><a href="freelancer_profile?Id='+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                    '<td><a href="freelancer_profile/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                     '<td>'+data[i].Name+'</td>'+
                                                     '<td>'+data[i].Age+'</td>'+
                                                     '<td>'+data[i].Career+'</td>'+

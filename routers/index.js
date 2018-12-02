@@ -32,11 +32,21 @@ router.get('/manager_page', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/manager_page.html'));
 });
 
-router.get('/client_profile', (req, res, next) => {
+router.get('/client_profile/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/client_profile.html'));
 });
 
-router.get('/freelancer_profile', (req, res, next) => {
+/*
+router.get('/client_profile/:id', (req,res,next) => {
+  res.render('client_profile',{
+    level: req.session.auth_level,
+    id: req.session.curr_id,
+    page_id: req.params.id
+  });
+});
+*/
+
+router.get('/freelancer_profile/:id', (req, res, next) => {
   res.type('html').sendFile(path.join(__dirname, '../public/html/freelancer_profile.html'));
 });
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

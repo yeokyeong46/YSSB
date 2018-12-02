@@ -51,6 +51,8 @@
             <input type="submit" class="btn btn-default" id="back" value="BACK">
         </div>
         <h1>클라이언트 개인 프로필</h1>
+        
+        <p>권한 테스트: 이 블럭이 나오면 본인 페이지 이거나 관리자 입니다.</p>
 
         <table class="table table-striped" id="profile">
             <tbody>
@@ -131,9 +133,10 @@
     <script>
 
         $(function(){
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            var Id = url.searchParams.get("Id");
+            var path_array = window.location.pathname.split('/');
+            var Id = path_array[2];
+
+            console.log(Id);
 
             $.ajax({
                 type: 'get',
@@ -207,7 +210,7 @@
                     url: '/get_client_profile/update',
                     data: v,
                     success: function(data) {
-                        window.location="/client_profile?Id="+Id;
+                        window.location="/client_profile/"+Id;
                     },
                     error: function(err) {
                         console.log(err);

@@ -18,7 +18,7 @@ router.get('/get_portfolio/:Id', wrapper.asyncMiddleware(async (req, res, next) 
 
 router.get('/get_work_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Request_id, State FROM work WHERE Participant_id='"+Id+"'");
+    var user = await db.getQueryResult("SELECT Request_id, State FROM work WHERE Participant_id='"+Id+"' AND state != 'COMPLETED'");
     res.json(user);
 }));
 
