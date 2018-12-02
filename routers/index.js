@@ -184,34 +184,23 @@ router.get('/freelancer_profile/:id', (req, res, next) => {
 });
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 router.get('/request_list', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/request_list.html'));
-});
-router.get('/request_info/:id', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/request_info.html'));
-});
-router.get('/view_message/:request_id', (req, res, next) => {
-  res.type('html').sendFile(path.join(__dirname, '../public/html/view_message.html'));
-});
-/*----------------message server-----------------
-var count=1;
-io.on('connection', function(socket){
-  console.log('user connected: ', socket.id);
-  var name = "user" + count++;
-  io.to(socket.id).emit('change name',name);
-
-  socket.on('disconnect', function(){
-    console.log('user disconnected: ', socket.id);
-  });
-
-  socket.on('send message', function(name,text){
-    var msg = name + ' : ' + text;
-    console.log(msg);
-    io.emit('receive message', msg);
+  res.render('request_list', {
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
   });
 });
-
-http.listen('3000', function(){
-  console.log("server on!");
+router.get('/request_info/:id', (req,res,next) => {
+  res.render('request_info',{
+    level: req.session.auth_level,
+    id: req.session.curr_id,
+    page_id: req.params.id
+  });
 });
-*/
+router.get('/view_message/:id', (req,res,next) => {
+  res.render('view_message',{
+    level: req.session.auth_level,
+    id: req.session.curr_id,
+    page_id: req.params.id
+  });
+});
 module.exports = router;
