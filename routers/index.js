@@ -207,6 +207,7 @@ router.get('/request_list', (req, res, next) => {
     sess_level: req.session.auth_level,
     sess_id: req.session.curr_id
   });
+  console.log(req.session);
 });
 router.get('/request_info/:id', (req,res,next) => {
   res.render('request_info',{
@@ -214,6 +215,7 @@ router.get('/request_info/:id', (req,res,next) => {
     sess_id: req.session.curr_id,
     sess_page_id: req.params.id
   });
+  console.log(req.session);
 });
 router.get('/view_message/:id', (req,res,next) => {
   res.render('view_message',{
@@ -221,5 +223,6 @@ router.get('/view_message/:id', (req,res,next) => {
     sess_id: req.session.curr_id,
     sess_page_id: req.params.id
   });
+  console.log(req.session);
 });
 module.exports = router;
