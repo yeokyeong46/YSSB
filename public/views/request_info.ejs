@@ -101,7 +101,7 @@
           </table>
         </div>
 
-        <button class="button">의뢰 신청</button>
+        <input class="button" type="submit" id="apply" value="의뢰 신청">
         <button class="button">의뢰 완료 요청</button>
         <input class="button" type="submit" id="view_message_button" value="의뢰 거부 메시지">
 
@@ -196,7 +196,24 @@
                     console.log(err);
                 }
             });
-
+            $('#apply').click(function(){
+              var v = {
+                      Request_id : Id,
+                      Participant_id : sess_id,
+                      State : "WAITING"
+                  }
+              $.ajax({
+                  type: 'post',
+                  url: '/get_request_info/apply',
+                  data: v,
+                  success: function(data) {
+                      window.location="/request_info/"+Id;
+                  },
+                  error: function(err) {
+                      console.log(err);
+                  }
+              });
+            });
             $('#view_message_button').click(function(){
                 window.location="/view_message/"+Id;
             });

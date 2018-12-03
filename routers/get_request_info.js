@@ -30,4 +30,16 @@ router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, nex
         //console.log('-------------------------------');
     res.json(user);
 }));
+
+router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Request_id = req.body.Request_id;
+    const Participant_id = req.body.Participant_id;
+    const State = req.body.State;
+    console.log(Request_id);
+    console.log(Participant_id);
+    console.log(State);
+    var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"')");
+    console.log(ret);
+    res.json({success: true});
+}));
 module.exports = router;
