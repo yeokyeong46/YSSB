@@ -6,7 +6,7 @@ module.exports={
     host: 'localhost',
     user: 'root',
   port: 3306,
-    password: '',
+    password: 'Wywl0515!!',
     database: 'no_team',
   },
   session_config: {
