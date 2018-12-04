@@ -23,11 +23,20 @@ router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>
 
 router.get('/get_worker_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Participant_id, State FROM work WHERE Request_id="+Id);
+    var user = await db.getQueryResult("SELECT A.Participant_id AS Pid, A.State AS State, R.Client_id AS Cid FROM WORK A, request R WHERE A.Request_id="+Id+" AND R.Id="+Id);
     //console.log('-------------------------------');
     //console.log(JSON.stringify(user, null, 2));
         //console.log('-------------------------------');
     res.json(user);
+}));
+
+router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next) =>{
+  const Request_id = req.body.Request_id;
+  const Participant_id = req.body.Participant_id;
+  const Work_state = req.body.Work_state;
+  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  console.log(ret);
+    res.json({success: true});
 }));
 
 router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {

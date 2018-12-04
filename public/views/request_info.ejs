@@ -92,6 +92,8 @@
                   <tr>
                       <th>아이디</th>
                       <th>상태</th>
+                      <th>완료요청</th>
+                      <th>거부사유확인</th>
                   </tr>
               </thead>
               <tbody>
@@ -188,10 +190,23 @@
                     console.log(data);
                     $('#worker tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
-                                                    '<td>'+data[i].State+'</td>'+
-                                                '</tr>');
+                        var will_be_append = '<tr>'+
+                                                    '<td><a href="/freelancer_profile/'+data[i].Pid+'">'+data[i].Pid+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Cid) {
+                            will_be_append = will_be_append.concat('<td>-</td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        }
+                        if (user_id == data[i].Pid) {
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        }
+                        <% if (sess_level==0) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#worker tbody').append(will_be_append);
                     }
                 },
@@ -245,11 +260,10 @@
                   }
               });
             });
-            $('#view_message_button').click(function(){
-                window.location="/view_message/"+Id;
-            });
         });
-
+        function view_message_button() {
+          window.location="/view_message/"+Id;
+        }
         function delete_request(Request_id){
             var v = {
               id : Request_id
@@ -260,6 +274,24 @@
                 data : v,
                 success: function(data) {
                     window.location="/request_list";
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "SUBMIT"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
                 },
                 error: function(err) {
                     console.log(err);
