@@ -79,7 +79,8 @@
                 <button class="btn btn-default" onclick="location.href='/request_list'">BACK</button>
                 <h2>의뢰 작성 페이지</h2>
             </div>
-            <form action="/write_request" method="POST" id=form>
+            <form action="/file_upload/req_spec" method="POST" id=form enctype="multipart/form-data">
+            <!--<form action="/write_request" method="POST" id=form enctype="multipart/form-data">-->
                 <div class="form-group">
                     <label>Title</label>
                     <input type="text" class="form-control" name="write_title" placeholder="Title" required>
@@ -101,9 +102,21 @@
                 </div>
     
                 <div class="form-group">
+                    <input type="file" class="form-control" name="file">
+                </div>
+
+                <div class="form-group">
                     <input type="submit" class="btn btn-default" value="WRITE">
                 </div>
+
             </form>
+
+            <!--<form action="/file_upload/req_spec" method="post" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="submit">
+            </form>
+            -->
+
         </div>
     </div>
 

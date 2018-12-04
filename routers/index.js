@@ -5,7 +5,6 @@ const path = require('path');
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
 const config = require('../config');
-const session = require('express-session');
 
 router.get('/', (req, res, next) => {
   res.render('index', {
