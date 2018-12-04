@@ -127,6 +127,11 @@
     <div class="tab">
       <button class="tablinks" onclick="openCity(event, 'all')">전체 의뢰</button>
       <button class="tablinks" onclick="openCity(event, 'offering')">구인 중인 의뢰</button>
+      <button class="tablinks" onclick="openCity(event, 'offering_early')">구인 중인 의뢰-시작 날짜 순</button>
+      <button class="tablinks" onclick="openCity(event, 'offering_pricy')">구인 중인 의뢰-의뢰 금액 순</button>
+      <button class="tablinks" onclick="openCity(event, 'working')">진행 중인 의뢰</button>
+      <button class="tablinks" onclick="openCity(event, 'working_early')">진행 중인 의뢰-시작 날짜 순</button>
+      <button class="tablinks" onclick="openCity(event, 'working_pricy')">진행 중인 의뢰-의뢰 금액 순</button>
     </div>
 
     <div id="all" class="tabcontent">
@@ -137,6 +142,7 @@
             <th>번호</th>
             <th>제목</th>
             <th>페이</th>
+            <th>의뢰 시작 날짜</th>
             <th>자격요건</th>
             <th>상태</th>
           </tr>
@@ -154,6 +160,92 @@
             <th>번호</th>
             <th>제목</th>
             <th>페이</th>
+            <th>의뢰 시작 날짜</th>
+            <th>자격요건</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div id="offering_early" class="tabcontent">
+      <h3>구인 중인 의뢰-시작 날짜 순</h3>
+      <table style="width :100%;">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>페이</th>
+            <th>의뢰 시작 날짜</th>
+            <th>자격요건</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div id="offering_pricy" class="tabcontent">
+      <h3>구인 중인 의뢰-의뢰 금액 순</h3>
+      <table style="width :100%;">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>페이</th>
+            <th>의뢰 시작 날짜</th>
+            <th>자격요건</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div id="working" class="tabcontent">
+      <h3>진행 중인 의뢰</h3>
+      <table style="width :100%;">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>페이</th>
+            <th>의뢰 시작 날짜</th>
+            <th>자격요건</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div id="working_early" class="tabcontent">
+      <h3>진행 중인 의뢰-시작 날짜 순</h3>
+      <table style="width :100%;">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>페이</th>
+            <th>의뢰 시작 날짜</th>
+            <th>자격요건</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div id="working_pricy" class="tabcontent">
+      <h3>진행 중인 의뢰-의뢰 금액 순</h3>
+      <table style="width :100%;">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>페이</th>
+            <th>의뢰 시작 날짜</th>
             <th>자격요건</th>
             <th>상태</th>
           </tr>
@@ -181,6 +273,7 @@
                                                 '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
                                                 '<td>'+data[i].State+'</td>'+
                                             '</tr>');
@@ -201,10 +294,116 @@
                                                 '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
                                                 '<td>'+data[i].Title+'</td>'+
                                                 '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
                                                 '<td>'+data[i].Min_career+'</td>'+
                                                 '<td>'+data[i].State+'</td>'+
                                             '</tr>');
                     $('#offering tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_offering_early_request/',
+            success: function(data) {
+                $('#offering_early tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#offering_early tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_offering_pricy_request/',
+            success: function(data) {
+                $('#offering_pricy tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#offering_pricy tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_working_request/',
+            success: function(data) {
+                $('#working tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#working tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_working_early_request/',
+            success: function(data) {
+                $('#working_early tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#working_early tbody').append(will_be_append);
+                }
+            },
+            error: function(err) {
+            console.log(err);
+            }
+        });
+        $.ajax({
+            type: 'get',
+            url: '/get_request_list/get_working_pricy_request/',
+            success: function(data) {
+                $('#working_pricy tbody').html("");
+                for(var i = 0 ; i < data.length; i ++) {
+                    var will_be_append = $('<tr>'+
+                                                '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                '<td>'+data[i].Title+'</td>'+
+                                                '<td>'+data[i].Pay+'</td>'+
+                                                '<td>'+data[i].Working_start_date+'</td>'+
+                                                '<td>'+data[i].Min_career+'</td>'+
+                                                '<td>'+data[i].State+'</td>'+
+                                            '</tr>');
+                    $('#working_pricy tbody').append(will_be_append);
                 }
             },
             error: function(err) {
