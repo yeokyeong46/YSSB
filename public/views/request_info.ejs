@@ -34,44 +34,44 @@
         <![endif]-->
     </head>
     <nav class="navbar navbar-default">
-            <div class="container-fluid">
-              <!-- Brand and toggle get grouped for better mobile display -->
-              <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/index">YSSB</a>
-              </div>
-          
-              <!-- Collect the nav links, forms, and other content for toggling -->
-              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-                  <% if(sess_level==0) { %>
-                  <li><a href="/manager_page">MY PAGE</a></li>
-                  <% } else if (sess_level==1) { %>
-                  <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
-                  <% } else if (sess_level==2) { %>
-                  <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
-                  <% }%>
-                  <% if(sess_id){ %>
-                  <li><a href="/request_list">Request List</a></li>
-                  <% }%>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                  <% if(sess_id){ %>
-                    <li><a href="/logout">LOG OUT</a></li>
-                  <% }else{ %>
-                    <li><a href="/login">LOG IN</a></li>
-                    <li><a href="/signup">SIGN UP</a></li>
-                  <% } %>
-                </ul>
-              </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
-          </nav>
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/index">YSSB</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+          <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
+            <% if(sess_level==0) { %>
+            <li><a href="/manager_page">MY PAGE</a></li>
+            <% } else if (sess_level==1) { %>
+            <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li>
+            <% } else if (sess_level==2) { %>
+            <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
+            <% }%>
+            <% if(sess_id){ %>
+            <li><a href="/request_list">Request List</a></li>
+            <% }%>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <% if(sess_id){ %>
+              <li><a href="/logout">LOG OUT</a></li>
+            <% }else{ %>
+              <li><a href="/login">LOG IN</a></li>
+              <li><a href="/signup">SIGN UP</a></li>
+            <% } %>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
     <body>
 
         <div id="basic_info">
@@ -82,7 +82,9 @@
           </table>
         </div>
 
-        <h3>수정 삭제 버튼 넣기</h3>
+        <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
+
+
         <div id="worker">
               <h3>참여 중인 프리랜서</h3>
               <table style="width :100%;" class="table table-striped">
@@ -90,6 +92,8 @@
                   <tr>
                       <th>아이디</th>
                       <th>상태</th>
+                      <th>완료요청</th>
+                      <th>거부사유확인</th>
                   </tr>
               </thead>
               <tbody>
@@ -104,7 +108,8 @@
                   <tr>
                       <th>아이디</th>
                       <th>상태</th>
-                      <th>수락/거절</th>
+                      <th>선택</th>
+                      <th>거절</th>
                   </tr>
               </thead>
               <tbody>
@@ -124,11 +129,9 @@
     </body>
 
     <script>
-
+        var path_array = window.location.pathname.split('/');
+        var Id = path_array[2];
         $(function(){
-
-          var path_array = window.location.pathname.split('/');
-          var Id = path_array[2];
 
             $.ajax({
                 type: 'get',
@@ -137,7 +140,8 @@
                     console.log(data);
                     $('#basic_info tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
+                        var Cid = data[i].Client_id;
+                        var will_be_append = '<tr>'+
                                                     '<th>Id</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
                                                 '</tr>'+
@@ -160,8 +164,17 @@
                                                 '<tr>'+
                                                     '<th>Client</th>'+
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
-                                                '</tr>'
-                                              );
+                                                '</tr>';
+                      var user_id = <%-JSON.stringify(sess_id)%>;
+                      if (user_id == Cid) {
+                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                      }
+                      <% if (sess_level==0) { %>
+                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                          if (data[i].State == "APPLIABLE") {
+                              will_be_append = will_be_append.concat('<tr><th>Delete</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
+                          }
+                      <% } %>
                         $('#basic_info tbody').append(will_be_append);
                     }
                 },
@@ -177,10 +190,23 @@
                     console.log(data);
                     $('#worker tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
-                                                    '<td>'+data[i].State+'</td>'+
-                                                '</tr>');
+                        var will_be_append = '<tr>'+
+                                                    '<td><a href="/freelancer_profile/'+data[i].Pid+'">'+data[i].Pid+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Cid) {
+                            will_be_append = will_be_append.concat('<td>-</td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        }
+                        if (user_id == data[i].Pid) {
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        }
+                        <% if (sess_level==0) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#worker tbody').append(will_be_append);
                     }
                 },
@@ -195,10 +221,19 @@
                     console.log(data);
                     $('#applier tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
-                                                    '<td>'+data[i].State+'</td>'+
-                                                '</tr>');
+                        var will_be_append = '<tr>'+
+                                                    '<td><a href="/freelancer_profile/'+data[i].Pid+'">'+data[i].Pid+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Cid) {
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="accept_request(\''+data[i].Pid+'\')" value="선택"></td>');
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="reject_request(\''+data[i].Pid+'\')" value="거절"></td>');
+                        }
+                        <% if (sess_level==0) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="accept_request(\''+data[i].Pid+'\')" value="선택"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="reject_request(\''+data[i].Pid+'\')" value="거절"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#applier tbody').append(will_be_append);
                     }
                 },
@@ -206,10 +241,11 @@
                     console.log(err);
                 }
             });
+
             $('#apply').click(function(){
               var v = {
                       Request_id : Id,
-                      Participant_id : sess_id,
+                      Participant_id : <%=sess_id%>,
                       State : "WAITING"
                   }
               $.ajax({
@@ -224,12 +260,81 @@
                   }
               });
             });
-            $('#view_message_button').click(function(){
-                window.location="/view_message/"+Id;
-            });
-
-
         });
+        function view_message_button() {
+          window.location="/view_message/"+Id;
+        }
+        function delete_request(Request_id){
+            var v = {
+              id : Request_id
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/delete_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_list";
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "SUBMIT"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function accept_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Apply_state : "ACCEPTED",
+              Work_state : "WORKING"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/accept_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function reject_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Apply_state : "REJECTED"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/reject_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
     </script>
 
 </html>
