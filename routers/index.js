@@ -5,6 +5,7 @@ const path = require('path');
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
 const config = require('../config');
+const session = require('express-session');
 
 router.get('/', (req, res, next) => {
   res.render('index', {
@@ -176,6 +177,32 @@ router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next)
   
 }));
 
+router.get('/write_request', (req, res, next) => {
+  res.render('write_request', {
+    sess_level: req.session.auth_level,
+    sess_id: req.session.curr_id
+  });
+});
+
+router.post('/write_request', wrapper.asyncMiddleware(async (req, res, next) => {
+  var now =  new Date(); 
+  var year = now.getFullYear();
+  var month = ("0" + (now.getMonth()+1)).slice(-2);
+  var date = ("0" + now.getDate()).slice(-2);
+  var today = year+"-"+month+"-"+date;
+  
+  var id = req.session.curr_id;
+  var title = req.body.write_title;
+  var pay = req.body.write_pay;
+  var end = req.body.write_end;
+  var min_career = req.body.write_min_career;
+
+  var queryR = "INSERT INTO REQUEST (Client_id, Title, Pay, Apply_start_date, Apply_end_date, Min_career) VALUES ('"+id+"', '"+title+"', '"+pay+"', '"+today+"', '"+end+"', '"+min_career+"');"
+  var resultR = await db.getQueryResult(queryR);
+
+  var msg = '<script type="text/javascript">alert("의뢰가 작성되었습니다!");window.location.href="/request_list"</script>';
+  res.send(msg);
+}));
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 router.get('/manager_page', (req,res,next) => {
@@ -202,6 +229,7 @@ router.get('/freelancer_profile/:id', (req,res,next) => {
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 router.get('/request_list', (req, res, next) => {
   res.render('request_list', {
     sess_level: req.session.auth_level,
