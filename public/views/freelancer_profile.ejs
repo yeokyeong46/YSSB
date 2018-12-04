@@ -152,6 +152,13 @@
             </tbody>
         </table>
 
+        <div>
+            <form action="/file_upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="portfolio_file">
+                <input type="submit">
+            </form>
+        </div>
+
         <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <form class="form-inline" id="portfolio_add">
             <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
