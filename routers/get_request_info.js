@@ -16,7 +16,7 @@ router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
 router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id; //get request_id
     console.log(Id);
-    var ret = await db.getQueryResult("DELETE FROM request WHERE Id='"+Id+"'");
+    var ret = await db.getQueryResult("DELETE FROM request WHERE Id="+Id);
     res.json({success: true});
 }));
 

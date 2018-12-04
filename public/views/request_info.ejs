@@ -45,7 +45,7 @@
             </button>
             <a class="navbar-brand" href="/index">YSSB</a>
           </div>
-      
+
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
@@ -53,7 +53,7 @@
                 <% if(sess_level==0) { %>
                 <li><a href="/manager_page">MY PAGE</a></li>
                 <% } else if (sess_level==1) { %>
-                <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
+                <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li>
                 <% } else if (sess_level==2) { %>
                 <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
                 <% }%>
@@ -131,8 +131,6 @@
 
           var path_array = window.location.pathname.split('/');
           var Id = path_array[2];
-          var Client_id = <%=sess_id%>;
-          var Auth_level = <%=sess_level%>;
 
             $.ajax({
                 type: 'get',
@@ -141,6 +139,7 @@
                     console.log(data);
                     $('#basic_info tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
+                        var Cid = data[i].Client_id;
                         var will_be_append = '<tr>'+
                                                     '<th>Id</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
@@ -166,9 +165,9 @@
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                 '</tr>'
                                               ;
-                      if (data[i].Client_id == Client_id || Auth_level == 0) {
+                      <% if (sess_level==0 || sess_id == Cid) { %>
                           will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
-                      }
+                      <% } %>
                       <% if (sess_level==0) { %>
                           if (data[i].State == "APPLIABLE") {
                               will_be_append = will_be_append.concat('<tr><th>Delete</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
