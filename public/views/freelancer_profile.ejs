@@ -147,9 +147,7 @@
         </table>
 
         <% if (sess_level==0 || sess_id==sess_page_id) { %>
-        <p>기존 포트폴리오의 번호와 겹지치 않는 번호를 선택해야함</p>
         <form class="form-inline" id="portfolio_add">
-            <input type="number" class="form-control" id="portfolio_num">
             <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
             <input type="submit" class="btn btn-default" value="ADD">
         </form>
@@ -191,15 +189,12 @@
         var path_array = window.location.pathname.split('/');
         var Id = path_array[2];
 
-        console.log(Id);
-
         $(function(){
 
             $.ajax({
                 type: 'get',
                 url: '/get_freelancer_profile/get_profile/'+Id,
                 success: function(data) {
-                    console.log(data);
                     $('#profile tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
@@ -242,7 +237,6 @@
                 type: 'get',
                 url: '/get_freelancer_profile/get_portfolio/'+Id,
                 success: function(data) {
-                    console.log(data);
                     $('#portfolio tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         if (data[i].Type == 0) { // internal request
@@ -271,7 +265,6 @@
                 type: 'get',
                 url: '/get_freelancer_profile/get_work_list/'+Id,
                 success: function(data) {
-                    console.log(data);
                     $('#work tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
@@ -291,7 +284,6 @@
                 type: 'get',
                 url: '/get_freelancer_profile/get_apply_list/'+Id,
                 success: function(data) {
-                    console.log(data);
                     $('#apply tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
@@ -311,7 +303,6 @@
                 type: 'get',
                 url: '/get_freelancer_profile/get_language/'+Id,
                 success: function(data) {
-                    console.log(data);
                     $('#language tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = '<tr>'+
@@ -352,7 +343,6 @@
             $('#portfolio_add').submit(function(){
                 var v = {
                         id: Id,
-                        num: $("#portfolio_num").val(),
                         title: $("#portfolio_title").val()
                     }
                 $.ajax({

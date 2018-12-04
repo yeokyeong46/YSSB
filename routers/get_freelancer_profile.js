@@ -39,34 +39,50 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     const attr = req.body.attr;
     const value = req.body.value;
     var ret = await db.getQueryResult("UPDATE freelancer SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
+    console.log(ret);
     res.json({success: true});
 }));
 
 router.post('/add_portfolio', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const title = req.body.title;
-    const portfolio_id = req.body.num;
+    //id max값 찾아서 +1
+    var tmp_ret = await db.getQueryResult("SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+Id+"'");
+    const max = tmp_ret[0]['MAX(Portfolio_id)'];
+    var portfolio_id;
+    if (max!=null)
+        portfolio_id = max+1;
+    else
+        portfolio_id = 1;
     var ret = await db.getQueryResult("INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+Id+"',"+portfolio_id+",1,'"+title+"')");
-    res.json({success: true});
+    console.log(ret);
+    res.json(ret);
 }));
 
 router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const language = req.body.language;
     const level = req.body.level;
-    console.log("---add language---");
-    console.log(Id);
-    console.log(language);
-    console.log(level);
-    console.log("------------------");
-    var ret = await db.getQueryResult("INSERT INTO freelancer_language_skill(Freelancer_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
-    res.json({success: true});
+    // db에 존재하는 언어이면 update, 아니면 insert
+    var tmp_ret = await db.getQueryResult("SELECT Language FROM freelancer_language_skill WHERE Freelancer_id='"+Id+"' AND Language='"+language+"'");
+    console.log(tmp_ret);
+    var ret;
+    if (Object.keys(tmp_ret).length==0) {
+        ret = await db.getQueryResult("INSERT INTO freelancer_language_skill(Freelancer_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
+    }
+    else {
+        ret = await db.getQueryResult("UPDATE freelancer_language_skill SET level="+level+" WHERE Freelancer_id='"+Id+"' AND Language='"+language+"'");
+    }
+    console.log(ret);
+    console.log(typeof ret);
+    res.json(ret);
 }));
 
 router.post('/delete_portfolio', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const portfolio_id = req.body.portfolio_id;
     var ret = await db.getQueryResult("DELETE FROM portfolio WHERE Freelancer_id='"+Id+"' and Portfolio_id='"+portfolio_id+"'");
+    console.log(ret);
     res.json({success: true});
 }));
 
@@ -74,6 +90,7 @@ router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =
     const Id = req.body.id;
     const language = req.body.language;
     var ret = await db.getQueryResult("DELETE FROM freelancer_language_skill WHERE Freelancer_id='"+Id+"' and Language='"+language+"'");
+    console.log(ret);
     res.json({success: true});
 }));
 

@@ -121,8 +121,6 @@
             var url_string = window.location.href;
             var url = new URL(url_string);
             var active_tab = url.searchParams.get("active_tab");
-            console.log(active_tab);
-            console.log(typeof active_tab);
 
             if(active_tab == "flist") {
                 console.log("in flist");
@@ -196,6 +194,8 @@
                 url: '/manager_page_list/delete_freelancer',
                 data: v,
                 success: function(data) {
+                    if(data.affectedRows==0)
+                        alert("지울 수 없는 프리랜서 입니다.");
                     window.location="/manager_page?active_tab=flist";
                 },
                 error: function(err) {
@@ -213,6 +213,8 @@
                 url: "/manager_page_list/delete_client",
                 data: v,
                 success: function(data) {
+                    if(data.affectedRows==0)
+                        alert("지울 수 없는 클라이언트 입니다.");
                     window.location="/manager_page";
                 },
                 error: function(err) {
