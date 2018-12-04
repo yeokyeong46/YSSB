@@ -5,22 +5,19 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/upload/')
+    cb(null, 'public/file_portfolio/')
   },
   filename: (req, file, cb) => {
-    cb(null, 'uploaded-img.jpg')
+    cb(null, flie.originalname)
   }
 });
 
 const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024*1024*10
-  }
+  storage: storage
 });
-const up = upload.fields([{name: 'img', maxCount: 1}]);
+const up = upload.fields([{name: 'docx', maxCount: 1}]);
 
-router.post('/', up, (req, res, next) => {
+router.post('/',up, (req, res, next) => {
   res.redirect('/');
 });
 
