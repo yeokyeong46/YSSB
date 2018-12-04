@@ -19,37 +19,44 @@
     <![endif]-->
     
     <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index">YSSB</a>
-        </div>
-    
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-          <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-            <li><a href="manager">MANAGER</a></li>
-            <li><a href="client">CLIENT</a></li>
-            <li><a href="freelancer">FREELANCER</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <% if(sess_id){ %>
-                <li><a href="logout">LOG OUT</a></li>
-            <% }else{ %>
-                <li><a href="login">LOG IN</a></li>
-                <li><a href="signup">SIGN UP</a></li>
-            <% } %>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">YSSB</a>
+          </div>
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+            <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
+              <% if(sess_level==0) { %>
+              <li><a href="/manager_page">MY PAGE</a></li>
+              <% } else if (sess_level==1) { %>
+              <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
+              <% } else if (sess_level==2) { %>
+              <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
+              <% }%>
+              <li><a href="/request_list">Request List</a></li>
+              <!--<li><a href="client">CLIENT</a></li>
+              <li><a href="freelancer">FREELANCER</a></li>-->
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <% if(sess_id){ %>
+                <li><a href="/logout">LOG OUT</a></li>
+              <% }else{ %>
+                <li><a href="/login">LOG IN</a></li>
+                <li><a href="/signup">SIGN UP</a></li>
+              <% } %>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
 </head>
 
 <body>
@@ -190,7 +197,58 @@
                     alert("전화번호 형식을 맞춰주세요");
                     return false;
                 }
-               
+
+                // - - - - - - - - - - - - - - - - - - - - //
+                // empty 문자 있으면 거절이랑, 랭귀지 중복이랑, 레벨 없는 경우 거절해줘야 함
+                // - - - - - - - - - - - - - - - - - - - - //
+                /*
+                var lngs = Object.values($("select[name^='signup_lng']"));
+                var lngk = Object.values($("select[name^='signup_lng']"));
+                console.log(lngs);
+                console.log(lngk);
+                var temp = {
+                    "C": false,
+                    "C++": false,
+                    "C#": false,
+                    "Python": false,
+                    "Java": false,
+                    "Html": false,
+                    "Javascript": false,
+                    "PHP": false,
+                    "R": false,
+                    "Switf": false,
+                    "mySql": false,
+                    "Ruby": false
+                };
+                for(var i=0; i<lngs.length-4;i++){
+                    console.log('----------------');
+                    console.log(lngs[i]);
+                    console.log(lngk[i]);
+                }
+                //console.log(typeof Object.keys(lngs));
+                //console.log(Object.keys(data));
+                //console.log();
+                /*
+                for(key in data) {
+                    if(data.hasOwnProperty(key)) {
+                        console.log('i is '+i);
+                        var value = data[key];
+                        //do something with value;
+                        console.log(typeof value);
+                        console.log(value);
+                        i++;
+                    }
+                }
+                */
+                //console.log(typeof $("select[name^='signup_lng']"));
+                //for(var i=0; i<$("select[name^='signup_lng']").length;i++){
+                //    console.log($("select[name^='signup_lng']"));
+                //}
+                //console.log('----------------');
+                //console.log($("select[name^='signup_lng']").length);
+                //console.log('----------------');
+                //console.log($("input[name^='signup_skill']").length);
+                //console.log('----------------');
             });
 
             $('#checkId').click(function(){

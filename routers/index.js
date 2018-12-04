@@ -151,16 +151,16 @@ router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next)
   var queryL = [];
   for(var i=0; i<lng.length; i++){
     queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
-    console.log(queryL[i]);
+    //console.log(queryL[i]);
   }
-
+  
   var resultF = await db.getQueryResult(queryF);
   var resultP = await db.getQueryResult(queryP);
   var resultL = [];
   for(var i=0; i<lng.length; i++){
     resultL.push(await db.getQueryResult(queryL[i]));
   }
-
+  /*
   console.log('- - - - - - - - - - - - -');
   console.log(resultF);
   console.log('- - - - - - - - - - - - -');
@@ -170,10 +170,10 @@ router.post('/signup_freelancer', wrapper.asyncMiddleware(async (req, res, next)
     console.log(resultL[i]);
   }
   console.log('- - - - - - - - - - - - -');
-
+*/
   var msg = '<script type="text/javascript">alert("새로운 프리랜서가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
-
+  
 }));
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
