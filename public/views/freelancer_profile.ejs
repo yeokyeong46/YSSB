@@ -42,9 +42,9 @@
               <% } else if (sess_level==2) { %>
               <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
               <% }%>
+              <% if(sess_id){ %>
               <li><a href="/request_list">Request List</a></li>
-              <!--<li><a href="client">CLIENT</a></li>
-              <li><a href="freelancer">FREELANCER</a></li>-->
+              <% }%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <% if(sess_id){ %>
@@ -58,6 +58,12 @@
         </div><!-- /.container-fluid -->
       </nav>
     <body>
+        <% if(!sess_id){ %>
+            <script type="text/javascript">
+                alert('로그인을 먼저 해주세요.');
+                window.location.href = '/';
+            </script>
+        <% } %>
         <% if (sess_level==0) { %>
         <div>
             <input type="submit" class="btn btn-default" id="back" value="BACK">

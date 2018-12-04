@@ -48,9 +48,9 @@
           <% } else if (sess_level==2) { %>
           <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
           <% }%>
+          <% if(sess_id){ %>
           <li><a href="/request_list">Request List</a></li>
-          <!--<li><a href="client">CLIENT</a></li>
-          <li><a href="freelancer">FREELANCER</a></li>-->
+          <% }%>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <% if(sess_id){ %>
