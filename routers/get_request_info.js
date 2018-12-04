@@ -13,6 +13,13 @@ router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     res.json(user);
 }));
 
+router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id; //get request_id
+    console.log(Id);
+    var ret = await db.getQueryResult("DELETE FROM request WHERE Id='"+Id+"'");
+    res.json({success: true});
+}));
+
 router.get('/get_worker_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     var user = await db.getQueryResult("SELECT Participant_id, State FROM work WHERE Request_id='"+Id+"'");
