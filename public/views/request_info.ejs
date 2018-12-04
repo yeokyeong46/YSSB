@@ -35,43 +35,32 @@
     </head>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
-          <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">YSSB</a>
-          </div>
+            <a class="navbar-brand" href="index.html">YSSB</a>
+            </div>
 
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#"> <span class="sr-only">(current)</span></a></li>-->
-                <% if(sess_level==0) { %>
-                <li><a href="/manager_page">MY PAGE</a></li>
-                <% } else if (sess_level==1) { %>
-                <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li>
-                <% } else if (sess_level==2) { %>
-                <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
-                <% }%>
-                <% if(sess_id){ %>
-                <li><a href="/request_list">Request List</a></li>
-                <% }%>
+                <li class="active"><a href="manager.html">MANAGER</a></li>
+                <li><a href="client.html">CLIENT</a></li>
+                <li><a href="freelancer.html">FREELANCER</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <% if(sess_id){ %>
-                    <li><a href="/logout">LOG OUT</a></li>
-                <% }else{ %>
-                    <li><a href="/login">LOG IN</a></li>
-                    <li><a href="/signup">SIGN UP</a></li>
-                <% } %>
+                <li><a href="login.html">LOGIN</a></li>
+                <li><a href="signin.html">SIGN IN</a></li>
             </ul>
-          </div><!-- /.navbar-collapse -->
+            </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
-      </nav>
+    </nav>
     <body>
 
         <div id="basic_info">
@@ -82,9 +71,7 @@
           </table>
         </div>
 
-        <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
-
-
+        <h3>수정 삭제 버튼 넣기</h3>
         <div id="worker">
               <h3>참여 중인 프리랜서</h3>
               <table style="width :100%;" class="table table-striped">
@@ -139,8 +126,7 @@
                     console.log(data);
                     $('#basic_info tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var Cid = data[i].Client_id;
-                        var will_be_append = '<tr>'+
+                        var will_be_append = $('<tr>'+
                                                     '<th>Id</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
                                                 '</tr>'+
@@ -164,15 +150,7 @@
                                                     '<th>Client</th>'+
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                 '</tr>'
-                                              ;
-                      <% if (sess_level==0 || sess_id == Cid) { %>
-                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
-                      <% } %>
-                      <% if (sess_level==0) { %>
-                          if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<tr><th>Delete</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
-                          }
-                      <% } %>
+                                              );
                         $('#basic_info tbody').append(will_be_append);
                     }
                 },
@@ -220,11 +198,7 @@
             $('#apply').click(function(){
               var v = {
                       Request_id : Id,
-<<<<<<< Updated upstream
-                      Participant_id : <%=sess_id%>,
-=======
-                      Participant_id : <%=sess_id>,
->>>>>>> Stashed changes
+                      Participant_id : sess_id,
                       State : "WAITING"
                   }
               $.ajax({
@@ -245,22 +219,6 @@
 
 
         });
-        function delete_request(Request_id){
-            var v = {
-              id : Request_id
-            }
-            $.ajax({
-                type: 'post',
-                url: "/get_request_info/delete_request",
-                data : v,
-                success: function(data) {
-                    window.location="/request_list";
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
-        }
     </script>
 
 </html>
