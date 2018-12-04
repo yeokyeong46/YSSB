@@ -106,7 +106,8 @@
                   <tr>
                       <th>아이디</th>
                       <th>상태</th>
-                      <th>수락/거절</th>
+                      <th>선택</th>
+                      <th>거절</th>
                   </tr>
               </thead>
               <tbody>
@@ -126,11 +127,9 @@
     </body>
 
     <script>
-
+        var path_array = window.location.pathname.split('/');
+        var Id = path_array[2];
         $(function(){
-
-          var path_array = window.location.pathname.split('/');
-          var Id = path_array[2];
 
             $.ajax({
                 type: 'get',
@@ -163,12 +162,13 @@
                                                 '<tr>'+
                                                     '<th>Client</th>'+
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
-                                                '</tr>'
-                                              ;
-                      <% if (sess_level==0 || sess_id == Cid) { %>
+                                                '</tr>';
+                      var user_id = <%-JSON.stringify(sess_id)%>;
+                      if (user_id == Cid) {
                           will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
-                      <% } %>
+                      }
                       <% if (sess_level==0) { %>
+                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
                           if (data[i].State == "APPLIABLE") {
                               will_be_append = will_be_append.concat('<tr><th>Delete</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
                           }
@@ -206,10 +206,19 @@
                     console.log(data);
                     $('#applier tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</a></td>'+
-                                                    '<td>'+data[i].State+'</td>'+
-                                                '</tr>');
+                        var will_be_append = '<tr>'+
+                                                    '<td><a href="/freelancer_profile/'+data[i].Pid+'">'+data[i].Pid+'</a></td>'+
+                                                    '<td>'+data[i].State+'</td>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Cid) {
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="accept_request(\''+data[i].Pid+'\')" value="선택"></td>');
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="reject_request(\''+data[i].Pid+'\')" value="거절"></td>');
+                        }
+                        <% if (sess_level==0) { %>
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="accept_request(\''+data[i].Pid+'\')" value="선택"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="reject_request(\''+data[i].Pid+'\')" value="거절"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#applier tbody').append(will_be_append);
                     }
                 },
@@ -217,6 +226,7 @@
                     console.log(err);
                 }
             });
+
             $('#apply').click(function(){
               var v = {
                       Request_id : Id,
@@ -238,9 +248,8 @@
             $('#view_message_button').click(function(){
                 window.location="/view_message/"+Id;
             });
-
-
         });
+
         function delete_request(Request_id){
             var v = {
               id : Request_id
@@ -251,6 +260,43 @@
                 data : v,
                 success: function(data) {
                     window.location="/request_list";
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function accept_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Apply_state : "ACCEPTED",
+              Work_state : "WORKING"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/accept_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function reject_request(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Apply_state : "REJECTED"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/reject_request",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
                 },
                 error: function(err) {
                     console.log(err);
