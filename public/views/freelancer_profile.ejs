@@ -155,7 +155,7 @@
             </tbody>
         </table>
 
-        <% if (sess_level==0 || sess_id==sess_page_id) { %>
+        <% if (sess_id==sess_page_id) { %>
         <div>
             <form action="/file_upload/portfolio" method="post" enctype="multipart/form-data">
                 <input type="file" name="file">
@@ -163,14 +163,6 @@
             </form>
         </div>
         <% } %>
-        <!--
-        <% if (sess_level==0 || sess_id==sess_page_id) { %>
-        <form class="form-inline" id="portfolio_add">
-            <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
-            <input type="submit" class="btn btn-default" value="ADD">
-        </form>
-        <% } %>
-        -->
 
         <hr>
 
@@ -210,7 +202,7 @@
 
     <script>
         var path_array = window.location.pathname.split('/');
-        var Id = path_array[2];
+        var Id = path_array[2]; //이 페이지의 아이디
 
         $(function(){
 
