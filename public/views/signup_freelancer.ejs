@@ -73,7 +73,7 @@
                 <button class="btn btn-default" onclick="location.href='signup'">BACK</button>
                 <h2>Freelancer Sign Up</h2>
             </div>
-            <form action="signup_freelancer" method="POST" id="form">
+            <form action="/file_upload/ptf_from_signup" method="POST" id="form" enctype="multipart/form-data">
                 <div class="form-group">
                         <label for="id">Id</label>
                         <input type="text" class="form-control" name="signup_id" id="signup_id" placeholder="Id" required>
@@ -143,8 +143,8 @@
 
                 <div class="form-group">
                     <label for="portfolio">Portfolio</label>
-                    <input type="text" class="form-control" name="signup_ptf" placeholder="Portfolio Title">
-                    <input type="button" class="btn btn-default" value="ATTACH">
+                    <!--<input type="text" class="form-control" name="signup_ptf" placeholder="Portfolio Title">-->
+                    <input type="file" class="btn btn-default" name="file">
                 </div>
 
                 <div class="form-group">
