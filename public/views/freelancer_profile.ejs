@@ -145,7 +145,6 @@
             <caption>포트폴리오</caption>
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>Title</th>
                     <% if (sess_level==0 || sess_id==sess_page_id) { %>
                     <th></th>
@@ -156,19 +155,22 @@
             </tbody>
         </table>
 
+        <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <div>
-            <form action="/file_upload" method="post" enctype="multipart/form-data">
-                <input type="file" name="portfolio_file">
+            <form action="/file_upload/portfolio" method="post" enctype="multipart/form-data">
+                <input type="file" name="file">
                 <input type="submit">
             </form>
         </div>
-
+        <% } %>
+        <!--
         <% if (sess_level==0 || sess_id==sess_page_id) { %>
         <form class="form-inline" id="portfolio_add">
             <input type="text" class="form-control" id="portfolio_title" placeholder="Portfolio Title">
             <input type="submit" class="btn btn-default" value="ADD">
         </form>
         <% } %>
+        -->
 
         <hr>
 
@@ -262,13 +264,12 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         if (data[i].Type == 0) { // internal request
                             var will_be_append = '<tr>'+
-                                                        '<td>'+data[i].Portfolio_id+'</td>'+
                                                         '<td><a href="/request_info/'+data[i].Internal_request_id+'">'+data[i].Title+'</a></td>';
                         }
-                        else { // external file
+                        else {
                             var will_be_append = '<tr>'+
-                                                        '<td>'+data[i].Portfolio_id+'</td>'+
-                                                        '<td>'+data[i].Title+'</td>';
+                                                        //'<td><a href="/file">'+data[i].Title+'</a></td>';
+                                                        '<td><a href="/view_file/portfolio/'+Id+'_'+data[i].Portfolio_id+'_'+data[i].Title+'">'+data[i].Title+'</a></td>';
                         }
                         <% if (sess_level==0 || sess_id==sess_page_id) { %>
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_portfolio(\''+data[i].Portfolio_id+'\')" value="-"></td>');

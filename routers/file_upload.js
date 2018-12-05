@@ -13,13 +13,26 @@ const storage_spec = multer.diskStorage({
     cb(null, req.session.curr_id+'_'+file.originalname)
   }
 });
+
 const storage_ptf = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/upload/protfolio')
+    cb(null, 'public/upload/portfolio')
   },
-  filename: (req, file, cb) => {
-    cb(null, req.session.curr_id+'_'+file.originalname)
-  }
+  filename: wrapper.asyncMiddleware(async(req, file, cb)=>{
+    // get portfolio number
+    var query = "SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+req.session.curr_id+"'";
+    var ret = await db.getQueryResult(query);
+    const max = ret[0]['MAX(Portfolio_id)'];
+    var portfolio_id;
+    if (max!=null)
+        portfolio_id = max+1;
+    else
+        portfolio_id = 1;
+    console.log(portfolio_id);
+    var query2 = "INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+req.session.curr_id+"',"+portfolio_id+",1,'"+file.originalname+"')";
+    var ret2 = await db.getQueryResult(query2);
+    cb(null, req.session.curr_id+'_'+portfolio_id+'_'+file.originalname)
+  })
 });
 
 const upload_spec = multer({
@@ -52,7 +65,8 @@ router.post('/req_spec', up_spec, wrapper.asyncMiddleware(async (req, res, next)
   res.send(msg);
 }));
 
+
 router.post('/portfolio', up_ptf, (req, res, next) => {
-  res.redirect('/');
+  res.redirect('/freelancer_profile/'+req.session.curr_id);
 });
 module.exports = router;
