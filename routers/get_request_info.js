@@ -87,6 +87,30 @@ router.post('/reject_request', wrapper.asyncMiddleware(async (req, res, next) =>
     res.json({success: true});
 }));
 
+router.post('/rate_freelancer', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Rid = req.body.Rid;
+    const Pid = req.body.Pid;
+    const Rate = req.body.Rate;
+    var ret2 = await db.getQueryResult("UPDATE request SET Pscore="+Rate+" WHERE Id="+Rid);
+    var new_rate = await db.getQueryResult("SELECT AVG(Pscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Participant_id='"+Pid+"')");
+    const Nrate = new_rate[0]['AVG(Pscore)'];
+    var ret = await db.getQueryResult("UPDATE freelancer SET Score="+Nrate+" WHERE Id='"+Pid+"'");
+    console.log(ret);
+    res.json(ret);
+}));
+
+router.post('/rate_client', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Rid = req.body.Rid;
+    const Cid = req.body.Cid;
+    const Rate = req.body.Rate;
+    var ret2 = await db.getQueryResult("UPDATE request SET Cscore="+Rate+" WHERE Id="+Rid);
+    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Client_id='"+Cid+"')");
+    const Nrate = new_rate[0]['AVG(Cscore)'];
+    var ret = await db.getQueryResult("UPDATE client SET Score="+Nrate+" WHERE Id='"+Cid+"'");
+    console.log(ret);
+    res.json(ret);
+}));
+
 router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
@@ -95,6 +119,7 @@ router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
     console.log(Participant_id);
     console.log(State);
     var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"')");
+    var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
     console.log(ret);
     res.json({success: true});
 }));
