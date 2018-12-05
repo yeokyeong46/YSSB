@@ -94,6 +94,8 @@
                       <th>상태</th>
                       <th>완료요청</th>
                       <th>거부사유확인</th>
+                      <th>완료수락</th>
+                      <th>완료거절</th>
                   </tr>
               </thead>
               <tbody>
@@ -206,6 +208,10 @@
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
                         <% } %>
+                        if (user_id == data[i].Cid && data[i].State == 'SUBMIT') {
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_accept(\''+data[i].Pid+'\')" value="완료수락"></td>');
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_reject(\''+data[i].Pid+'\')" value="완료거절"></td>');
+                        }
                         will_be_append = will_be_append.concat('</tr>');
                         $('#worker tbody').append(will_be_append);
                     }
@@ -292,6 +298,43 @@
                 data : v,
                 success: function(data) {
                     window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_accept(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "COMPLETED"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_accept",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                    //평점 지정하기
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_reject(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "SUBMIT"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_reject",
+                data : v,
+                success: function(data) {
+                    window.location="/view_message/"+Id;
                 },
                 error: function(err) {
                     console.log(err);

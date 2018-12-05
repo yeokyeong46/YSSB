@@ -39,6 +39,24 @@ router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next)
     res.json({success: true});
 }));
 
+router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) =>{
+  const Request_id = req.body.Request_id;
+  const Participant_id = req.body.Participant_id;
+  const Work_state = req.body.Work_state;
+  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  console.log(ret);
+    res.json({success: true});
+}));
+
+router.post('/completed_reject', wrapper.asyncMiddleware(async (req, res, next) =>{
+  const Request_id = req.body.Request_id;
+  const Participant_id = req.body.Participant_id;
+  const Work_state = req.body.Work_state;
+  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  console.log(ret);
+    res.json({success: true});
+}));
+
 router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     var user = await db.getQueryResult("SELECT A.Participant_id AS Pid, A.State AS State, R.Client_id AS Cid FROM apply A, request R WHERE A.Request_id="+Id+" AND A.State='WAITING' AND R.Id="+Id);
