@@ -228,28 +228,12 @@ router.get('/freelancer_profile/:id', (req,res,next) => {
   });
 });
 
-router.get('/file', function(req, res){
-  var tempFile="./public/upload/portfolio/1.pdf";
-  fs.readFile(tempFile, function (err,data){
-     res.contentType("application/pdf");
-     res.send(data);
-  });
-  /*
-  var file = fs.createReadStream(tempFile);
-  var stat = fs.statSync(tempFile);
-  res.setHeader('Content-Length', stat.size);
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
-  file.pipe(res);
-  */
-});
-
 router.get('/view_file/:folder/:name', function(req, res){
-  var tempFile='../public/upload/'+req.params.folder+'/'+req.params.name;
+  var tempFile='./public/upload/'+req.params.folder+'/'+req.params.name;
   fs.readFile(tempFile, function (err,data){
     res.contentType("application/pdf");
     res.send(data);
- });
+  });
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
