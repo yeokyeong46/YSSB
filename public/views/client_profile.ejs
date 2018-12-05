@@ -109,6 +109,8 @@
         </div> 
         <% } %>
 
+        <hr>
+
         <table class="table table-striped" id="working">
             <caption>진행중</caption>
             <thead>
@@ -121,6 +123,11 @@
             </tbody>
         </table>
 
+        <input type="submit" class="btn btn-default" id="sort_pay" value="금액 높은 순으로 정렬">
+        <input type="submit" class="btn btn-default" id="sort_date" value="개발 시작 날짜 빠른 순으로 정렬">
+        
+        <hr>
+
         <table class="table table-striped" id="appliable">
             <caption>구인중</caption>
             <thead>
@@ -132,6 +139,8 @@
             <tbody>
             </tbody>
         </table>
+
+        <hr>
 
         <table class="table table-striped" id="completed">
             <caption>완료</caption>
@@ -240,6 +249,48 @@
 
             $('#back').click(function(){
                 window.location="/manager_page";
+            });
+
+            $('#sort_date').click(function(){
+                $.ajax({
+                    type: 'get',
+                    url: '/get_client_profile/get_request_list_date/'+Id,
+                    success: function(data) {
+                        console.log(data);
+                        $('#working tbody').html("");
+                        for(var i = 0 ; i < data.length; i ++) {
+                            var will_be_append = $('<tr>'+
+                                                        '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                        '<td>'+data[i].Title+'</td>'+
+                                                    '</tr>');
+                            $('#working tbody').append(will_be_append);
+                        }
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $('#sort_pay').click(function(){
+                $.ajax({
+                    type: 'get',
+                    url: '/get_client_profile/get_request_list_pay/'+Id,
+                    success: function(data) {
+                        console.log(data);
+                        $('#working tbody').html("");
+                        for(var i = 0 ; i < data.length; i ++) {
+                            var will_be_append = $('<tr>'+
+                                                        '<td><a href="/request_info/'+data[i].Id+'">'+data[i].Id+'</a></td>'+
+                                                        '<td>'+data[i].Title+'</td>'+
+                                                    '</tr>');
+                            $('#working tbody').append(will_be_append);
+                        }
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
             });
 
         });
