@@ -5,6 +5,7 @@ const path = require('path');
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
 const config = require('../config');
+const fs = require('fs');
 
 router.get('/', (req, res, next) => {
   res.render('index', {
@@ -225,6 +226,30 @@ router.get('/freelancer_profile/:id', (req,res,next) => {
     sess_id: req.session.curr_id,
     sess_page_id: req.params.id
   });
+});
+
+router.get('/file', function(req, res){
+  var tempFile="./public/upload/portfolio/1.pdf";
+  fs.readFile(tempFile, function (err,data){
+     res.contentType("application/pdf");
+     res.send(data);
+  });
+  /*
+  var file = fs.createReadStream(tempFile);
+  var stat = fs.statSync(tempFile);
+  res.setHeader('Content-Length', stat.size);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+  file.pipe(res);
+  */
+});
+
+router.get('/view_file/:folder/:name', function(req, res){
+  var tempFile='../public/upload/'+req.params.folder+'/'+req.params.name;
+  fs.readFile(tempFile, function (err,data){
+    res.contentType("application/pdf");
+    res.send(data);
+ });
 });
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

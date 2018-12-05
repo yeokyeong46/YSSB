@@ -16,6 +16,18 @@ router.get('/get_request_list/:Id', wrapper.asyncMiddleware(async (req, res, nex
     res.json(user);
 }));
 
+router.get('/get_request_list_pay/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT Id, Title, State FROM request WHERE Client_id='"+Id+"' AND State='WORKING' ORDER BY Pay DESC");
+    res.json(user);
+}));
+
+router.get('/get_request_list_date/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT Id, Title, State FROM request WHERE Client_id='"+Id+"' AND State='WORKING' ORDER BY Working_start_date ASC");
+    res.json(user);
+}));
+
 router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const attr = req.body.attr;
