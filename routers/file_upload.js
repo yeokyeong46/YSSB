@@ -5,9 +5,9 @@ const multer = require('multer');
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
 
-const storage_spec = multer.diskStorage({
+const storage_spec_from_write = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/upload/req_spec')
+    cb(null, 'public/upload/req_spec');
   },
   filename: wrapper.asyncMiddleware(async (req, file, cb) => {
     var now =  new Date(); 
@@ -33,7 +33,7 @@ const storage_spec = multer.diskStorage({
     console.log(queryRF);
     var resultRF = await db.getQueryResult(queryRF);
 
-    cb(null, reqId+'_'+file.originalname)
+    cb(null, reqId+'_'+file.originalname);
   })
 });
 
@@ -58,17 +58,13 @@ const storage_ptf = multer.diskStorage({
   })
 });
 
-const upload_spec = multer({
-  storage: storage_spec,
-});
-const upload_ptf = multer({
-  storage: storage_ptf,
+const upload_spec_from_write = multer({
+  storage: storage_spec_from_write,
 });
 
-const up_spec = upload_spec.fields([{name: 'file', maxCount: 5}]);
-const up_ptf = upload_ptf.fields([{name: 'file', maxCount: 5}]);
+const up_spec_from_write = upload_spec_from_write.fields([{name: 'file', maxCount: 5}]);
 
-router.post('/req_spec_from_write', up_spec, wrapper.asyncMiddleware(async (req, res, next) => {
+router.post('/req_spec_from_write', up_spec_from_write, wrapper.asyncMiddleware(async (req, res, next) => {
   var msg = '<script type="text/javascript">alert("의뢰가 작성되었습니다!");window.location.href="/request_list"</script>';
   res.send(msg);
   
