@@ -214,17 +214,25 @@
                                                     '<td>'+data[i].Apply_end_date+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>의뢰 시작날짜</th>'+
-                                                    '<td>'+data[i].Working_start_date+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>의뢰 마감날짜</th>'+
-                                                    '<td>'+data[i].Working_end_date+'</td>'+
-                                                '</tr>'+
-                                                '<tr>'+
-                                                    '<th>Client</th>'+
-                                                    '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
-                                                '</tr>';
+                                                    '<th>의뢰 시작날짜</th>';
+
+                        if(data[i].Working_start_date == null)
+                            will_be_append = will_be_append.concat('<td>의뢰가 시작되지 않음</td>');
+                        else
+                            will_be_append = will_be_append.concat('<td>'+data[i].Working_start_date+'</td>');
+                        
+                        will_be_append = will_be_append.concat('</tr>'+'<tr>'+'<th>의뢰 마감날짜</th>');
+
+                        if(data[i].Working_end_date == null)
+                            will_be_append = will_be_append.concat('<td>의뢰가 종료되지 않음</td>');
+                        else
+                            will_be_append = will_be_append.concat('<td>'+data[i].Working_end_date+'</td>');
+
+                        will_be_append = will_be_append.concat( '</tr>'+
+                                                                '<tr>'+
+                                                                    '<th>Client</th>'+
+                                                                    '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
+                                                                '</tr>');
                         var user_id = <%-JSON.stringify(sess_id)%>;
                         var update_string = '<tr><th>의뢰수정</th><td><form class="form-inline" id="update"><select id="update_attr"><option value="Title">Title</option><option value="Pay">Pay</option><option value="Min_career">Min Career</option></select><input type="text" class="form-control" id="update_value" placeholder="new value"><input type="submit" class="btn btn-default" value="UPDATE"></td></form></tr>';
                         if (user_id == Cid) {
