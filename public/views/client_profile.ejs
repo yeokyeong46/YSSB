@@ -175,7 +175,7 @@
                     console.log(data);
                     $('#profile tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
+                        var will_be_append = '<tr>'+
                                                     '<th>Id</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
                                                 '</tr>'+
@@ -188,9 +188,12 @@
                                                     '<td>'+data[i].Phone+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>Score</th>'+
-                                                    '<td>'+data[i].Score+'</td>'+
-                                                '</tr>');
+                                                    '<th>Score</th>';
+                        if (data[i].Score != '6')
+                            will_be_append = will_be_append.concat('<td>'+data[i].Score+'</td>');
+                        else
+                            will_be_append = will_be_append.concat('<td>평점없음</td>');
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#profile tbody').append(will_be_append);
                     }
                 },

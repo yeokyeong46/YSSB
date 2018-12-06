@@ -120,7 +120,6 @@ const storage_add_req_spec = multer.diskStorage({
     cb(null, 'public/upload/req_spec')
   },
   filename: wrapper.asyncMiddleware(async(req, file, cb)=>{
-    console.log(req.body);
     var query = "INSERT INTO request_file(request_id,file_id) VALUES("+req.body.request_id+",'"+file.originalname+"')";
     var ret = await db.getQueryResult(query);
 
@@ -168,6 +167,7 @@ router.post('/portfolio', up_ptf, (req, res, next) => {
 });
 
 router.post('/add_req_spec', up_add_req_spec, (req, res, next) => {
+  console.log(req);
   res.redirect('/request_info/'+req.body.request_id);
 });
 

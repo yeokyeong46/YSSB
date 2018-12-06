@@ -120,16 +120,12 @@
         </table>
 
         <!-- 권한 설정 필요 -->
-        <div>
-            <form action="/file_upload/add_req_spec" method="POST" id=form enctype="multipart/form-data">
+        <div id="add_req_spec">
+            <!--action="/file_upload/add_req_spec" method="POST"-->
+            <form  action="/file_upload/add_req_spec" method="POST" class="form-inline"enctype="multipart/form-data">
                 <input type="hidden" name="request_id" value="<%=sess_page_id%>">
-                <div class="form-group">
-                    <input type="file" class="btn btn-default" name="file">
-                </div>
-
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default" value="ADD">
-                </div>
+                <input type="file" class="btn btn-default" name="file">
+                <input type="submit" class="btn btn-default" value="ADD">
             </form>
         </div>
 
@@ -178,6 +174,7 @@
     <script>
         var path_array = window.location.pathname.split('/');
         var Id = path_array[2];
+
         $(function(){
 
             $.ajax({
@@ -228,19 +225,25 @@
                                                     '<th>Client</th>'+
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                 '</tr>';
-                      var user_id = <%-JSON.stringify(sess_id)%>;
-                      var update_string = '<tr><th>의뢰수정</th><td><form class="form-inline" id="update"><select id="update_attr"><option value="Title">Title</option><option value="Pay">Pay</option><option value="Min_career">Min Career</option></select><input type="text" class="form-control" id="update_value" placeholder="new value"><input type="submit" class="btn btn-default" value="UPDATE"></td></form></tr>';
-                      if (user_id == Cid) {
-                          will_be_append = will_be_append.concat(update_string);
-                          console.log(data[i].Title);
-                      }
-                      <% if (sess_level==0) { %>
-                          will_be_append = will_be_append.concat(update_string);
-                          if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<tr><th>의뢰 삭제</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
-                          }
-                      <% } %>
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        var update_string = '<tr><th>의뢰수정</th><td><form class="form-inline" id="update"><select id="update_attr"><option value="Title">Title</option><option value="Pay">Pay</option><option value="Min_career">Min Career</option></select><input type="text" class="form-control" id="update_value" placeholder="new value"><input type="submit" class="btn btn-default" value="UPDATE"></td></form></tr>';
+                        if (user_id == Cid) {
+                            will_be_append = will_be_append.concat(update_string);
+                            console.log(data[i].Title);
+                        }
+                        <% if (sess_level==0) { %>
+                            will_be_append = will_be_append.concat(update_string);
+                            if (data[i].State == "APPLIABLE") {
+                                will_be_append = will_be_append.concat('<tr><th>의뢰 삭제</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
+                            }
+                        <% } %>
                         $('#basic_info tbody').append(will_be_append);
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Client_id || user_id=='admin') {
+                            document.getElementById('add_req_spec').style.display = "block";
+                        }
+                        else
+                            document.getElementById('add_req_spec').style.display = "none";
                     }
                 },
                 error: function(err) {
@@ -280,8 +283,8 @@
                                                     '<td>'+data[i].Language+'</td>'+
                                                     '<td>'+data[i].Level+'</td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Client_id) {
-                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="요건 삭제"></td>');
+                        if (user_id == data[i].Client_id || user_id=='admin') {
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="요건 삭제"></td>');
                         }
                         will_be_append = will_be_append.concat('</tr>');
                         $('#language tbody').append(will_be_append);
@@ -298,12 +301,12 @@
                 success: function(data) {
                     $('#request_file tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                          var will_be_append = '<tr>'+
+                        var will_be_append = '<tr>'+
                                                       '<td><a href="/view_file/req_spec/'+Id+'_'+data[i].File_id+'">'+data[i].File_id+'</a></td>';
-                          var user_id = <%-JSON.stringify(sess_id)%>;
-                          if (user_id == data[i].Client_id) {
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Client_id || user_id=='admin') {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_file(\''+data[i].File_id+'\')" value="파일 삭제"></td>');
-                          }
+                        }
                         will_be_append = will_be_append.concat('</tr>');
                         $('#request_file tbody').append(will_be_append);
                     }
@@ -611,6 +614,24 @@
                 }
             });
         }
+        /*
+        $('#add_req_spec').submit(function(){
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'post',
+                url: '/file_upload/add_req_spec',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
+        */
 
     </script>
 

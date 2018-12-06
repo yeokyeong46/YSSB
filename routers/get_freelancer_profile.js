@@ -43,22 +43,6 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     res.json({success: true});
 }));
 
-router.post('/add_portfolio', wrapper.asyncMiddleware(async (req, res, next) =>{
-    const Id = req.body.id;
-    const title = req.body.title;
-    //id max값 찾아서 +1
-    var tmp_ret = await db.getQueryResult("SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+Id+"'");
-    const max = tmp_ret[0]['MAX(Portfolio_id)'];
-    var portfolio_id;
-    if (max!=null)
-        portfolio_id = max+1;
-    else
-        portfolio_id = 1;
-    var ret = await db.getQueryResult("INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+Id+"',"+portfolio_id+",1,'"+title+"')");
-    console.log(ret);
-    res.json(ret);
-}));
-
 router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const language = req.body.language;
