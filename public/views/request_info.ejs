@@ -81,7 +81,15 @@
             </tbody>
           </table>
         </div>
-
+<!--
+        <div id="freelancer_apply">
+          <h3>신청 가능한 의뢰입니다.</h3>
+          <table>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+-->
         <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
 
         <table class="table table-striped" id="language">
@@ -223,18 +231,15 @@
                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                 '</tr>';
                       var user_id = <%-JSON.stringify(sess_id)%>;
+                      var update_string = '<tr><th>의뢰수정</th><td><form class="form-inline" id="update"><select id="update_attr"><option value="Title">Title</option><option value="Pay">Pay</option><option value="Min_career">Min Career</option></select><input type="text" class="form-control" id="update_value" placeholder="new value"><input type="submit" class="btn btn-default" value="UPDATE"></td></form></tr>';
                       if (user_id == Cid) {
-                          will_be_append = will_be_append.concat('<tr><th>의뢰 수정</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                          will_be_append = will_be_append.concat(update_string);
+                          console.log(data[i].Title);
                       }
                       <% if (sess_level==0) { %>
-                          will_be_append = will_be_append.concat('<tr><th>의뢰 수정</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                          will_be_append = will_be_append.concat(update_string);
                           if (data[i].State == "APPLIABLE") {
                               will_be_append = will_be_append.concat('<tr><th>의뢰 삭제</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
-                          }
-                      <% } %>
-                      <% if (sess_level==2) { %>
-                          if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<tr><th>의뢰 신청</th><td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td></tr>');
                           }
                       <% } %>
                         $('#basic_info tbody').append(will_be_append);
@@ -244,6 +249,28 @@
                 console.log(err);
                 }
             });
+/*
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/freelancer_apply/'+Id,
+                success: function(data) {
+                    $('#freelancer_apply tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = '<tr>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        <% if (sess_level==2) { %>
+                            if (data[i].State == "APPLIABLE") {
+                                will_be_append = will_be_append.concat('<tr><th>의뢰 신청</th><td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td></tr>');
+                            }
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#freelancer_apply tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });*/
 
             $.ajax({
                 type: 'get',
@@ -278,6 +305,49 @@
                         // 권한 설정 필요
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_docu(\''+data[i].File_id+'\')" value="-"></td>');
                         //
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#request_file tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/get_language/'+Id,
+                success: function(data) {
+                    $('#language tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = '<tr>'+
+                                                    '<td>'+data[i].Language+'</td>'+
+                                                    '<td>'+data[i].Level+'</td>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        if (user_id == data[i].Client_id) {
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="요건 삭제"></td>');
+                        }
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#language tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/get_request_file/'+Id,
+                success: function(data) {
+                    $('#request_file tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                          var will_be_append = '<tr>'+
+                                                      '<td><a href="/view_file/req_spec/'+Id+'_'+data[i].File_id+'">'+data[i].File_id+'</a></td>';
+                          var user_id = <%-JSON.stringify(sess_id)%>;
+                          if (user_id == data[i].Client_id) {
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_file(\''+data[i].File_id+'\')" value="파일 삭제"></td>');
+                          }
                         will_be_append = will_be_append.concat('</tr>');
                         $('#request_file tbody').append(will_be_append);
                     }
@@ -364,6 +434,26 @@
                 error: function(err) {
                     console.log(err);
                 }
+            });
+            $('#update').submit(function(){
+                var v = {
+                        id: Id,
+                        attr: $("#update_attr").val(),
+                        value: $("#update_value").val()
+                    }
+                $.ajax({
+                    type: 'post',
+                    url: '/get_request_info/update',
+                    data: v,
+                    success: function(data) {
+                        console.log(attr);
+                        console.log(value);
+                        window.location="/request_info/"+Id;
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
             });
         });
         function view_message_button() {
@@ -549,6 +639,24 @@
         }
 
         function delete_request_docu(File_id){
+            var v = {
+                    id: Id,
+                    file_id: File_id
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/delete_request_file",
+                data: v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function delete_request_file(File_id){
             var v = {
                     id: Id,
                     file_id: File_id
