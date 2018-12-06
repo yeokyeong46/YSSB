@@ -7,7 +7,7 @@ const db = require('../modules/db');
 router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     console.log("hi");
-    var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State, Client_id FROM request WHERE Id="+Id);
+    var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State, Client_id, DATE_FORMAT(Apply_start_date,'%Y-%m-%d') Apply_start_date, DATE_FORMAT(Apply_end_date,'%Y-%m-%d') Apply_end_date, DATE_FORMAT(Working_start_date,'%Y-%m-%d') Working_start_date, DATE_FORMAT(Working_end_date,'%Y-%m-%d') Working_end_date FROM request WHERE Id="+Id);
     //console.log('-------------------------------');
     //console.log(JSON.stringify(user, null, 2));
         //console.log('-------------------------------');
