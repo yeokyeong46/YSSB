@@ -124,6 +124,12 @@
 
     <h3>  Request List</h3>
 
+    <% if (sess_level==1) { %>
+    <div>
+        <input type="submit" class="btn btn-default" id="write_request" value="WRITE">
+    </div>
+    <% } %>
+
     <div class="tab">
       <button class="tablinks" onclick="openCity(event, 'all')">전체 의뢰</button>
       <button class="tablinks" onclick="openCity(event, 'offering')">구인 중인 의뢰</button>
@@ -410,6 +416,10 @@
             console.log(err);
             }
         });
+
+        $('#write_request').click(function(){
+              window.location="/write_request";
+          });
     });
 
     function openCity(evt, cityName) {
