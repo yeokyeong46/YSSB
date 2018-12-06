@@ -7,7 +7,7 @@ const db = require('../modules/db');
 router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     console.log("hi");
-    var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State, Client_id FROM request WHERE Id="+Id);
+    var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State, Client_id, DATE_FORMAT(Apply_start_date,'%Y-%m-%d') Apply_start_date, DATE_FORMAT(Apply_end_date,'%Y-%m-%d') Apply_end_date, DATE_FORMAT(Working_start_date,'%Y-%m-%d') Working_start_date, DATE_FORMAT(Working_end_date,'%Y-%m-%d') Working_end_date FROM request WHERE Id="+Id);
     //console.log('-------------------------------');
     //console.log(JSON.stringify(user, null, 2));
         //console.log('-------------------------------');
@@ -31,6 +31,24 @@ router.get('/get_worker_list/:Id', wrapper.asyncMiddleware(async (req, res, next
 }));
 
 router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next) =>{
+  const Request_id = req.body.Request_id;
+  const Participant_id = req.body.Participant_id;
+  const Work_state = req.body.Work_state;
+  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  console.log(ret);
+    res.json({success: true});
+}));
+
+router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) =>{
+  const Request_id = req.body.Request_id;
+  const Participant_id = req.body.Participant_id;
+  const Work_state = req.body.Work_state;
+  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  console.log(ret);
+    res.json({success: true});
+}));
+
+router.post('/completed_reject', wrapper.asyncMiddleware(async (req, res, next) =>{
   const Request_id = req.body.Request_id;
   const Participant_id = req.body.Participant_id;
   const Work_state = req.body.Work_state;
@@ -69,6 +87,30 @@ router.post('/reject_request', wrapper.asyncMiddleware(async (req, res, next) =>
     res.json({success: true});
 }));
 
+router.post('/rate_freelancer', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Rid = req.body.Rid;
+    const Pid = req.body.Pid;
+    const Rate = req.body.Rate;
+    var ret2 = await db.getQueryResult("UPDATE request SET Pscore="+Rate+" WHERE Id="+Rid);
+    var new_rate = await db.getQueryResult("SELECT AVG(Pscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Participant_id='"+Pid+"')");
+    const Nrate = new_rate[0]['AVG(Pscore)'];
+    var ret = await db.getQueryResult("UPDATE freelancer SET Score="+Nrate+" WHERE Id='"+Pid+"'");
+    console.log(ret);
+    res.json(ret);
+}));
+
+router.post('/rate_client', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Rid = req.body.Rid;
+    const Cid = req.body.Cid;
+    const Rate = req.body.Rate;
+    var ret2 = await db.getQueryResult("UPDATE request SET Cscore="+Rate+" WHERE Id="+Rid);
+    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Client_id='"+Cid+"')");
+    const Nrate = new_rate[0]['AVG(Cscore)'];
+    var ret = await db.getQueryResult("UPDATE client SET Score="+Nrate+" WHERE Id='"+Cid+"'");
+    console.log(ret);
+    res.json(ret);
+}));
+
 router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
@@ -77,6 +119,7 @@ router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
     console.log(Participant_id);
     console.log(State);
     var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"')");
+    var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
     console.log(ret);
     res.json({success: true});
 }));

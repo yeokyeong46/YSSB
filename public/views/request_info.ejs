@@ -94,6 +94,9 @@
                       <th>상태</th>
                       <th>완료요청</th>
                       <th>거부사유확인</th>
+                      <th>완료수락</th>
+                      <th>완료거절</th>
+                      <th>평점등록</th>
                   </tr>
               </thead>
               <tbody>
@@ -117,10 +120,6 @@
           </table>
         </div>
 
-        <input class="button" type="submit" id="apply" value="의뢰 신청">
-        <button class="button">의뢰 완료 요청</button>
-        <input class="button" type="submit" id="view_message_button" value="의뢰 거부 메시지">
-
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
@@ -142,24 +141,40 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         var Cid = data[i].Client_id;
                         var will_be_append = '<tr>'+
-                                                    '<th>Id</th>'+
+                                                    '<th>의뢰 번호</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>Title</th>'+
+                                                    '<th>의뢰 제목</th>'+
                                                     '<td>'+data[i].Title+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>Pay</th>'+
+                                                    '<th>보상 금액</th>'+
                                                     '<td>'+data[i].Pay+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>Career</th>'+
+                                                    '<th>자격 요건(경력)</th>'+
                                                     '<td>'+data[i].Min_career+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>State</th>'+
+                                                    '<th>의뢰 가능여부</th>'+
                                                     '<td>'+data[i].State+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>등록 날짜</th>'+
+                                                    '<td>'+data[i].Apply_start_date+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>신청 마감날짜</th>'+
+                                                    '<td>'+data[i].Apply_end_date+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>의뢰 시작날짜</th>'+
+                                                    '<td>'+data[i].Working_start_date+'</td>'+
+                                                '</tr>'+
+                                                '<tr>'+
+                                                    '<th>의뢰 마감날짜</th>'+
+                                                    '<td>'+data[i].Working_end_date+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
                                                     '<th>Client</th>'+
@@ -167,12 +182,17 @@
                                                 '</tr>';
                       var user_id = <%-JSON.stringify(sess_id)%>;
                       if (user_id == Cid) {
-                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                          will_be_append = will_be_append.concat('<tr><th>의뢰 수정</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
                       }
                       <% if (sess_level==0) { %>
-                          will_be_append = will_be_append.concat('<tr><th>Update</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
+                          will_be_append = will_be_append.concat('<tr><th>의뢰 수정</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 수정"></td></tr>');
                           if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<tr><th>Delete</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
+                              will_be_append = will_be_append.concat('<tr><th>의뢰 삭제</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
+                          }
+                      <% } %>
+                      <% if (sess_level==2) { %>
+                          if (data[i].State == "APPLIABLE") {
+                              will_be_append = will_be_append.concat('<tr><th>의뢰 신청</th><td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td></tr>');
                           }
                       <% } %>
                         $('#basic_info tbody').append(will_be_append);
@@ -194,19 +214,39 @@
                                                     '<td><a href="/freelancer_profile/'+data[i].Pid+'">'+data[i].Pid+'</a></td>'+
                                                     '<td>'+data[i].State+'</td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Cid) {
-                            will_be_append = will_be_append.concat('<td>-</td>');
+                        if (user_id == data[i].Cid) { //
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                            if (data[i].State == 'SUBMIT') {
+                              will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_accept(\''+data[i].Pid+'\')" value="완료수락"></td>');
+                              will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_reject(\''+data[i].Pid+'\')" value="완료거절"></td>');
+                              will_be_append = will_be_append.concat('<td>수락 후 가능</td>');
+                            }
+                            else if (data[i].State == 'COMPLETED') {
+                              will_be_append = will_be_append.concat('<td>이미 수락</td>');
+                              will_be_append = will_be_append.concat('<td>-</td>');
+                              will_be_append = will_be_append.concat('<td><form class="form-inline"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2</form><input type="radio" name="rate" value="3">3</form><input type="radio" name="rate" value="4">4</form><input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_freelancer(\''+data[i].Pid+'\')" value="RATE"></form></td>');
+                            }
                         }
                         if (user_id == data[i].Pid) {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
+                            if (data[i].State == 'COMPLETED') {
+                              will_be_append = will_be_append.concat('<td><form class="form-inline" id="rate_client"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2</form><input type="radio" name="rate" value="3">3</form><input type="radio" name="rate" value="4">4</form><input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_client(\''+data[i].Cid+'\')" value="RATE"></form></td>');
+                            }
+                            else {
+                              will_be_append = will_be_append.concat('<td>수락 후 가능</td>');
+                            }
                         }
                         <% if (sess_level==0) { %>
-                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
+                            will_be_append = will_be_append.concat('<td>권한 없음</td>');
                         <% } %>
-                        will_be_append = will_be_append.concat('</tr>');
                         $('#worker tbody').append(will_be_append);
                     }
                 },
@@ -241,28 +281,27 @@
                     console.log(err);
                 }
             });
-
-            $('#apply').click(function(){
-              var v = {
-                      Request_id : Id,
-                      Participant_id : <%=sess_id%>,
-                      State : "WAITING"
-                  }
-              $.ajax({
-                  type: 'post',
-                  url: '/get_request_info/apply',
-                  data: v,
-                  success: function(data) {
-                      window.location="/request_info/"+Id;
-                  },
-                  error: function(err) {
-                      console.log(err);
-                  }
-              });
-            });
         });
         function view_message_button() {
           window.location="/view_message/"+Id;
+        }
+        function apply_request(){
+            var v = {
+                    Request_id : Id,
+                    Participant_id : <%=sess_id%>,
+                    State : "WAITING"
+                }
+            $.ajax({
+                type: 'post',
+                url: '/get_request_info/apply',
+                data: v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
         }
         function delete_request(Request_id){
             var v = {
@@ -292,6 +331,42 @@
                 data : v,
                 success: function(data) {
                     window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_accept(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "COMPLETED"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_accept",
+                data : v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        function completed_reject(Participant_id){
+            var v = {
+              Request_id : Id,
+              Participant_id : Participant_id,
+              Work_state : "SUBMIT"
+            }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/completed_reject",
+                data : v,
+                success: function(data) {
+                    window.location="/view_message/"+Id;
                 },
                 error: function(err) {
                     console.log(err);
@@ -335,6 +410,43 @@
                 }
             });
         }
+        function rate_freelancer(Participant_id){
+          var v = {
+                  Rid : Id,
+                  Pid: Participant_id,
+                  Rate: $('input[name="rate"]:checked').val()
+              }
+          $.ajax({
+              type: 'post',
+              url: '/get_request_info/rate_freelancer',
+              data: v,
+              success: function(data) {
+                  window.location="/request_info/"+Id;
+              },
+              error: function(err) {
+                  console.log(err);
+              }
+          });
+        }
+        function rate_client(Client_id){
+          var v = {
+                  Rid : Id,
+                  Cid: Client_id,
+                  Rate: $('input[name="rate"]:checked').val()
+              }
+          $.ajax({
+              type: 'post',
+              url: '/get_request_info/rate_client',
+              data: v,
+              success: function(data) {
+                  window.location="/request_info/"+Id;
+              },
+              error: function(err) {
+                  console.log(err);
+              }
+          });
+        }
+
     </script>
 
 </html>
