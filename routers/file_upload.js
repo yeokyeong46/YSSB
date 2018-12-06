@@ -14,12 +14,12 @@ const storage_spec_from_write = multer.diskStorage({
     cb(null, 'public/upload/req_spec');
   },
   filename: wrapper.asyncMiddleware(async (req, file, cb) => {
-    var now =  new Date(); 
+    var now =  new Date();
     var year = now.getFullYear();
     var month = ("0" + (now.getMonth()+1)).slice(-2);
     var date = ("0" + now.getDate()).slice(-2);
     var today = year+"-"+month+"-"+date;
-    
+
     var id = req.session.curr_id;
     var title = req.body.write_title;
     var pay = req.body.write_pay;
@@ -94,7 +94,7 @@ const storage_ptf = multer.diskStorage({
     console.log(portfolio_id);
     var query2 = "INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+req.session.curr_id+"',"+portfolio_id+",1,'"+file.originalname+"')";
     var ret2 = await db.getQueryResult(query2);
-    
+
     cb(null, req.session.curr_id+'_'+portfolio_id+'_'+file.originalname)
   })
 });
@@ -108,7 +108,7 @@ const storage_add_req_spec = multer.diskStorage({
     console.log(req.body);
     var query = "INSERT INTO request_file(request_id,file_id) VALUES("+req.body.request_id+",'"+file.originalname+"')";
     var ret = await db.getQueryResult(query);
-    
+
     cb(null, req.body.request_id+'_'+file.originalname)
   })
 });
