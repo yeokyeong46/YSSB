@@ -84,6 +84,33 @@
 
         <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
 
+        <table class="table table-striped" id="language">
+            <caption>필요 언어</caption>
+            <thead>
+                <tr>
+                    <th>Language</th>
+                    <th>level</th>
+                    <!--권한 설정 필요-->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <table class="table table-striped" id="request_file">
+            <caption>의뢰 문서</caption>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <!--권한 설정 필요-->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
 
         <div id="worker">
               <h3>참여 중인 프리랜서</h3>
@@ -200,6 +227,48 @@
                 },
                 error: function(err) {
                 console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/get_language/'+Id,
+                success: function(data) {
+                    $('#language tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = '<tr>'+
+                                                    '<td>'+data[i].Language+'</td>'+
+                                                    '<td>'+data[i].Level+'</td>';
+                        
+                        // 권한 설정 필요
+                        will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="-"></td>');
+                        //
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#language tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/get_request_info/get_request_file/'+Id,
+                success: function(data) {
+                    $('#request_file tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                            var will_be_append = '<tr>'+
+                                                        '<td><a href="/view_file/req_spec/'+Id+'_'+data[i].File_id+'">'+data[i].File_id+'</a></td>';
+                        // 권한 설정 필요
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_docu(\''+data[i].File_id+'\')" value="-"></td>');
+                        //
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#request_file tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
                 }
             });
 
@@ -445,6 +514,41 @@
                   console.log(err);
               }
           });
+        }
+        function delete_language(Language){
+            var v = {
+                    id: Id,
+                    language: Language
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/delete_language",
+                data: v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function delete_request_docu(File_id){
+            var v = {
+                    id: Id,
+                    file_id: File_id
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_request_info/delete_request_file",
+                data: v,
+                success: function(data) {
+                    window.location="/request_info/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
         }
 
     </script>
