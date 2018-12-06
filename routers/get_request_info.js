@@ -69,34 +69,6 @@ router.post('/delete_request_file', wrapper.asyncMiddleware(async (req, res, nex
     res.json({success: true});
 }));
 
-router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
-    var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT Language, Level FROM request_language_skill WHERE request_id='"+Id+"'");
-    res.json(user);
-}));
-
-router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =>{
-    const Id = req.body.id;
-    const language = req.body.language;
-    var ret = await db.getQueryResult("DELETE FROM request_language_skill WHERE Request_id='"+Id+"' and Language='"+language+"'");
-    console.log(ret);
-    res.json({success: true});
-}));
-
-router.get('/get_request_file/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
-    var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT File_id FROM REQUEST_FILE WHERE Request_id = "+Id);
-    res.json(user);
-}));
-
-router.post('/delete_request_file', wrapper.asyncMiddleware(async (req, res, next) =>{
-    const Id = req.body.id;
-    const file_id = req.body.file_id;
-    var ret = await db.getQueryResult("DELETE FROM request_file WHERE Request_id="+Id+" and File_id='"+file_id+"'");
-    console.log(ret);
-    res.json({success: true});
-}));
-
 router.get('/get_worker_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     var user = await db.getQueryResult("SELECT A.Participant_id AS Pid, A.State AS State, R.Client_id AS Cid FROM WORK A, request R WHERE A.Request_id="+Id+" AND R.Id="+Id);
