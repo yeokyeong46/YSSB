@@ -88,11 +88,29 @@ router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next)
 }));
 
 router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) =>{
-  const Request_id = req.body.Request_id;
-  const Participant_id = req.body.Participant_id;
-  const Work_state = req.body.Work_state;
-  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
-  console.log(ret);
+    const Request_id = req.body.Request_id;
+    const Participant_id = req.body.Participant_id;
+    const Work_state = req.body.Work_state;
+    var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+    //console.log(ret);
+    //완료된 의뢰를 포트폴리오에 자동으로 저장하기
+    // 포트폴리오 아이디 구하기
+    var tmp_ret = await db.getQueryResult("SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+Participant_id+"'");
+    const max = tmp_ret[0]['MAX(Portfolio_id)'];
+    var portfolio_id=1;
+    if (max!=null)
+        portfolio_id = max+1;
+    var ret2 =await db.getQueryResult("INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, Internal_request_id) VALUES ('"+Participant_id+"','"+portfolio_id+"',0,"+Request_id+")");
+    //console.log(ret2);
+    // 의뢰 완료 요청을 수락하면 의뢰 개발 끝 날짜 업데이트
+    var now =  new Date();
+    var year = now.getFullYear();
+    var month = ("0" + (now.getMonth()+1)).slice(-2);
+    var date = ("0" + now.getDate()).slice(-2);
+    var today = year+"-"+month+"-"+date;
+    var ret3 = await db.getQueryResult("UPDATE request SET working_end_date='"+today+"', State='COMPLETED' WHERE Id="+Request_id);
+    console.log("@@@@@@@@@@@");
+    console.log(ret3);
     res.json({success: true});
 }));
 
