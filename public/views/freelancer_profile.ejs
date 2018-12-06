@@ -212,7 +212,7 @@
                 success: function(data) {
                     $('#profile tbody').html("");
                     for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
+                        var will_be_append = '<tr>'+
                                                     '<th>Id</th>'+
                                                     '<td>'+data[i].Id+'</td>'+
                                                 '</tr>'+
@@ -237,9 +237,12 @@
                                                     '<td>'+data[i].Phone+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>Score</th>'+
-                                                    '<td>'+data[i].Score+'</td>'+
-                                                '</tr>');
+                                                    '<th>Score</th>';
+                        if (data[i].Score!='6')
+                            will_be_append = will_be_append.concat('<td>'+data[i].Score+'</td>');
+                        else
+                            will_be_append = will_be_append.concat('<td>평점없음</td>');
+                        will_be_append = will_be_append.concat('</tr>');
                         $('#profile tbody').append(will_be_append);
                     }
                 },
@@ -343,24 +346,6 @@
                 $.ajax({
                     type: 'post',
                     url: '/get_freelancer_profile/update',
-                    data: v,
-                    success: function(data) {
-                        window.location="/freelancer_profile/"+Id;
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                });
-            });
-
-            $('#portfolio_add').submit(function(){
-                var v = {
-                        id: Id,
-                        title: $("#portfolio_title").val()
-                    }
-                $.ajax({
-                    type: 'post',
-                    url: '/get_freelancer_profile/add_portfolio',
                     data: v,
                     success: function(data) {
                         window.location="/freelancer_profile/"+Id;
