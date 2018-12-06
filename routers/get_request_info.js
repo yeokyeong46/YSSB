@@ -14,10 +14,58 @@ router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     res.json(user);
 }));
 
+router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const attr = req.body.attr;
+    const value = req.body.value;
+    console.log("ah");
+    var ret = await db.getQueryResult("UPDATE request SET "+attr+"='"+value+"' WHERE Id="+Id);
+    console.log("ah!!!");
+    console.log(ret);
+    res.json({success: true});
+}));
+
 router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id; //get request_id
     console.log(Id);
     var ret = await db.getQueryResult("DELETE FROM request WHERE Id="+Id);
+    res.json({success: true});
+}));
+//
+//router.post('/freelancer_apply', wrapper.asyncMiddleware(async (req, res, next) =>{
+  //  const Id = req.body.id;
+  //  const attr = req.body.attr;
+  //  const value = req.body.value;
+  //  var ret = await db.getQueryResult("UPDATE request SET "+attr+"='"+value+"' WHERE Id="+Id);
+  //  console.log(ret);
+  //  res.json({success: true});
+//}));
+
+router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT RL.Language AS Language, RL.Level AS Level, R.Client_id AS Client_id FROM request_language_skill RL, request R WHERE RL.Request_id="+Id+" AND R.Id="+Id);
+    res.json(user);
+}));
+
+router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const language = req.body.language;
+    var ret = await db.getQueryResult("DELETE FROM request_language_skill WHERE Request_id="+Id+" and Language='"+language+"'");
+    console.log(ret);
+    res.json({success: true});
+}));
+
+router.get('/get_request_file/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT RF.File_id AS File_id, R.Client_id AS Client_id FROM request_file RF, request R WHERE RF.Request_id="+Id+" AND R.Id="+Id);
+    res.json(user);
+}));
+
+router.post('/delete_request_file', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const file_id = req.body.file_id;
+    var ret = await db.getQueryResult("DELETE FROM request_file WHERE Request_id="+Id+" and File_id='"+file_id+"'");
+    console.log(ret);
     res.json({success: true});
 }));
 
