@@ -114,7 +114,7 @@
                 <div class="form-group">
                     <label for="language_skill">Language Skill (You should write at least 1 language)</label>
                     <div id="pre_set">
-                        <select name="signup_lng">
+                        <select name="signup_lng[0]">
                             <option value="C">C</option>
                             <option value="C++">C++</option>
                             <option value="C#">C#</option>
@@ -128,11 +128,11 @@
                             <option value="mySql">mySql</option>
                             <option value="Ruby">Ruby</option>
                         </select>
-                        <input type="radio" name="signup_skill" value="1">1
-                        <input type="radio" name="signup_skill" value="2">2
-                        <input type="radio" name="signup_skill" value="3">3
-                        <input type="radio" name="signup_skill" value="4">4
-                        <input type="radio" name="signup_skill" value="5">5
+                        <input type="radio" name="signup_skill[0]" value="1">1
+                        <input type="radio" name="signup_skill[0]" value="2">2
+                        <input type="radio" name="signup_skill[0]" value="3">3
+                        <input type="radio" name="signup_skill[0]" value="4">4
+                        <input type="radio" name="signup_skill[0]" value="5">5
                         <input type="button" class="btn btn-default" value="DELETE" onclick="remove_item(this)">
                     </div>
                     <div id="field">
@@ -158,16 +158,15 @@
     <script type='text/javascript'>
 
         var flag_checkId = false;   // 아이디 중복 확인 여부
-        var lng_num = 0;    // index를 증가시키기 위한 변수
+        var lng_num = 1;    // index를 증가시키기 위한 변수
         function add_item(){
             var base = document.createElement('div');
             base.innerHTML = document.getElementById('pre_set').innerHTML;
 
             // language 개수
-            var idx = lng_num;
-            var new_name_div = idx;
-            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name")+'['+idx+']';
-            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name")+'['+idx+']';
+            var new_name_div = lng_num;
+            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
+            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
 
             base.setAttribute("name", new_name_div);
             base.getElementsByTagName("select")[0].setAttribute("name", new_name_type);
@@ -175,7 +174,7 @@
                 base.getElementsByTagName("input")[i].setAttribute("name", new_name_skill);
             }
             
-            console.log(base);
+            //console.log(base);
             document.getElementById('field').appendChild(base);
             lng_num++;
         }
@@ -187,98 +186,96 @@
         }
 
 
-        $(function(){
-            $('#form').submit(function(){
-                if(!flag_checkId){
-                    alert('id 중복확인은 필수입니다.');
-                    return false;
-                }
-                if(!/^\d{3}-\d{3,4}-\d{4}$/.test($("#signup_phone").val())){
-                    alert("전화번호 형식을 맞춰주세요");
-                    return false;
-                }
+        $('#form').submit(function(){
+            if(!flag_checkId){
+                alert('id 중복확인은 필수입니다.');
+                return false;
+            }
+            if(!/^\d{3}-\d{3,4}-\d{4}$/.test($("#signup_phone").val())){
+                alert("전화번호 형식을 맞춰주세요");
+                return false;
+            }
 
-                // - - - - - - - - - - - - - - - - - - - - //
-                // empty 문자 있으면 거절이랑, 랭귀지 중복이랑, 레벨 없는 경우 거절해줘야 함
-                // - - - - - - - - - - - - - - - - - - - - //
-                /*
-                var lngs = Object.values($("select[name^='signup_lng']"));
-                var lngk = Object.values($("select[name^='signup_lng']"));
-                console.log(lngs);
-                console.log(lngk);
-                var temp = {
-                    "C": false,
-                    "C++": false,
-                    "C#": false,
-                    "Python": false,
-                    "Java": false,
-                    "Html": false,
-                    "Javascript": false,
-                    "PHP": false,
-                    "R": false,
-                    "Switf": false,
-                    "mySql": false,
-                    "Ruby": false
-                };
-                for(var i=0; i<lngs.length-4;i++){
-                    console.log('----------------');
-                    console.log(lngs[i]);
-                    console.log(lngk[i]);
+            // - - - - - - - - - - - - - - - - - - - - //
+            // empty 문자 있으면 거절이랑, 랭귀지 중복이랑, 레벨 없는 경우 거절해줘야 함
+            // - - - - - - - - - - - - - - - - - - - - //
+            /*
+            var lngs = Object.values($("select[name^='signup_lng']"));
+            var lngk = Object.values($("select[name^='signup_lng']"));
+            console.log(lngs);
+            console.log(lngk);
+            var temp = {
+                "C": false,
+                "C++": false,
+                "C#": false,
+                "Python": false,
+                "Java": false,
+                "Html": false,
+                "Javascript": false,
+                "PHP": false,
+                "R": false,
+                "Switf": false,
+                "mySql": false,
+                "Ruby": false
+            };
+            for(var i=0; i<lngs.length-4;i++){
+                console.log('----------------');
+                console.log(lngs[i]);
+                console.log(lngk[i]);
+            }
+            //console.log(typeof Object.keys(lngs));
+            //console.log(Object.keys(data));
+            //console.log();
+            /*
+            for(key in data) {
+                if(data.hasOwnProperty(key)) {
+                    console.log('i is '+i);
+                    var value = data[key];
+                    //do something with value;
+                    console.log(typeof value);
+                    console.log(value);
+                    i++;
                 }
-                //console.log(typeof Object.keys(lngs));
-                //console.log(Object.keys(data));
-                //console.log();
-                /*
-                for(key in data) {
-                    if(data.hasOwnProperty(key)) {
-                        console.log('i is '+i);
-                        var value = data[key];
-                        //do something with value;
-                        console.log(typeof value);
-                        console.log(value);
-                        i++;
-                    }
-                }
-                */
-                //console.log(typeof $("select[name^='signup_lng']"));
-                //for(var i=0; i<$("select[name^='signup_lng']").length;i++){
-                //    console.log($("select[name^='signup_lng']"));
-                //}
-                //console.log('----------------');
-                //console.log($("select[name^='signup_lng']").length);
-                //console.log('----------------');
-                //console.log($("input[name^='signup_skill']").length);
-                //console.log('----------------');
-            });
-
-            $('#checkId').click(function(){
-                var data = {
-                    signup_id: $("#signup_id").val()
-                }
-                $.ajax({
-                    type: 'post',
-                    url: '/checkId',
-                    data: data,
-                    success: function(result) {
-                        if(result=='empty'){
-                         $('#msg_dup_check').html("아이디에는 공백이 포함될 수 없습니다.");
-                            flag_checkId = false;
-                        }
-                        else if(result=='new'){
-                            $('#msg_dup_check').html("사용 가능한 아이디입니다.");
-                            flag_checkId = true;
-                        }
-                        else if(result=='exist'){
-                            $('#msg_dup_check').html("아이디가 이미 존재합니다.");
-                            flag_checkId = false;
-                        }
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                });
-            })
+            }
+            */
+            //console.log(typeof $("select[name^='signup_lng']"));
+            //for(var i=0; i<$("select[name^='signup_lng']").length;i++){
+            //    console.log($("select[name^='signup_lng']"));
+            //}
+            //console.log('----------------');
+            //console.log($("select[name^='signup_lng']").length);
+            //console.log('----------------');
+            //console.log($("input[name^='signup_skill']").length);
+            //console.log('----------------');
         });
+
+        $('#checkId').click(function(){
+            var data = {
+                signup_id: $("#signup_id").val()
+            }
+            $.ajax({
+                type: 'post',
+                url: '/checkId',
+                data: data,
+                success: function(result) {
+                    if(result=='empty'){
+                        $('#msg_dup_check').html("아이디에는 공백이 포함될 수 없습니다.");
+                        flag_checkId = false;
+                    }
+                    else if(result=='new'){
+                        $('#msg_dup_check').html("사용 가능한 아이디입니다.");
+                        flag_checkId = true;
+                    }
+                    else if(result=='exist'){
+                        $('#msg_dup_check').html("아이디가 이미 존재합니다.");
+                        flag_checkId = false;
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        })
     </script>
 
     <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
