@@ -97,6 +97,36 @@
                 </div>
     
                 <div class="form-group">
+                    <label for="language_skill">Language Skill</label>
+                    <div id="pre_set">
+                        <select name="write_lng[0]">
+                            <option value="C">C</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="Python">Python</option>
+                            <option value="Java">Java</option>
+                            <option value="Html">Html</option>
+                            <option value="Javascript">Javascript</option>
+                            <option value="PHP">PHP</option>
+                            <option value="R">R</option>
+                            <option value="Swift">Swift</option>
+                            <option value="mySql">mySql</option>
+                            <option value="Ruby">Ruby</option>
+                        </select>
+                        <input type="radio" name="write_skill[0]" value="1">1
+                        <input type="radio" name="write_skill[0]" value="2">2
+                        <input type="radio" name="write_skill[0]" value="3">3
+                        <input type="radio" name="write_skill[0]" value="4">4
+                        <input type="radio" name="write_skill[0]" value="5">5
+                        <input type="button" class="btn btn-default" value="DELETE" onclick="remove_item(this)">
+                    </div>
+                    <div id="field">
+                    <!-- 여기에 새로만든 language option이 추가됨-->
+                    </div>
+                    <input type="button" class="btn btn-default" value="ADD" onclick="add_item()">
+                </div>
+
+                <div class="form-group">
                     <label>필요한 최소 경력</label>
                     <input type="number" class="form-control" name="write_min_career" required>
                 </div>
@@ -123,6 +153,33 @@
 <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script type='text/javascript'>
+
+    var lng_num = 1;    // index를 증가시키기 위한 변수
+        function add_item(){
+            var base = document.createElement('div');
+            base.innerHTML = document.getElementById('pre_set').innerHTML;
+
+            // language 개수
+            var new_name_div = lng_num;
+            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
+            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
+
+            base.setAttribute("name", new_name_div);
+            base.getElementsByTagName("select")[0].setAttribute("name", new_name_type);
+            for(var i=0; i<5;i++){
+                base.getElementsByTagName("input")[i].setAttribute("name", new_name_skill);
+            }
+            
+            //console.log(base);
+            document.getElementById('field').appendChild(base);
+            lng_num++;
+        }
+
+    function remove_item(obj){
+        // 지우려는 div의 아이디
+        var delete_idx = Number(obj.parentNode.getAttribute("name"));
+        document.getElementById('field').removeChild(obj.parentNode);
+    }
 
     $('#form').submit(function(){
         var end = $('#write_end').val();
