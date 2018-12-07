@@ -25,26 +25,6 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     res.json({success: true});
 }));
 
-router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
-    const Id = req.body.id;
-    const language = req.body.language;
-    const level = req.body.level;
-    // db에 존재하는 언어이면 update, 아니면 insert
-    var tmp_ret = await db.getQueryResult("SELECT Language FROM request_language_skill WHERE Request_id='"+Id+"' AND Language='"+language+"'");
-    console.log(tmp_ret);
-    var ret;
-    if (Object.keys(tmp_ret).length==0) {
-        ret = await db.getQueryResult("INSERT INTO request_language_skill(Request_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
-    }
-    else {
-        ret = await db.getQueryResult("UPDATE request_language_skill SET level="+level+" WHERE Request_id='"+Id+"' AND Language='"+language+"'");
-    }
-    console.log(ret);
-    console.log(typeof ret);
-    res.json(ret);
-}));
-
-
 router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id; //get request_id
     console.log(Id);
@@ -52,27 +32,31 @@ router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>
     res.json({success: true});
 }));
 
-router.post('/freelancer_apply', wrapper.asyncMiddleware(async (req, res, next) =>{
+router.post('/freelancer_apply:Id', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
     const State = req.body.State;
     //query1 언어 요건 충족되면 아무것도 출력하지 않음
-    var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level)";
-    query1.concat("SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;");
-    var queryResult1 = await db.getQueryResult(query1);
-    if (Object.keys(queryResult1).length==0){
+    console.log("nth passed");
+    var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
+    var ret = await db.getQueryResult(query1);
+    console.log("query1 passed");
+    if (Object.keys(ret).length==0){
       //query2 최소경력 충족되면 아무것도 출력하지 않음
       console.log("언어요건충족");
-      var query2 = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = Request_id AND F.Career < R.Min_career;";
-      var queryResult2 = await db.getQueryResult(query2);
-      if (Object.keys(queryResult2).length==0){
+      var query2 = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = "+Request_id+" AND F.Career < R.Min_career;";
+      ret = await db.getQueryResult(query2);
+      if (Object.keys(ret).length==0){
         console.log("최소경력충족");
-        var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"')");
-        var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
-        console.log(ret);
+        var query3 = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
+        if (Object.keys(query3).length !=0){
+          var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"');");
+          var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
+          console.log(ret);
+        }
       }
     }
-    res.json({success: true});
+    res.json(ret);
 }));
 
 router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
