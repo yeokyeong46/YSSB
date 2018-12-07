@@ -88,7 +88,7 @@
     
                 <div class="form-group">
                     <label>Pay($)</label>
-                    <input type="number" class="form-control" name="write_pay" placeholder="단위는 $입니다." required>
+                    <input type="number" class="form-control" name="write_pay" placeholder="단위는 $입니다." min="0" required>
                 </div>
     
                 <div>
@@ -128,11 +128,17 @@
 
                 <div class="form-group">
                     <label>필요한 최소 경력(년)</label>
-                    <input type="number" class="form-control" name="write_min_career" required>
+                    <input type="number" class="form-control" name="write_min_career" min="0" required>
                 </div>
-    
+                
                 <div class="form-group">
-                    <input type="file" class="btn btn-default" name="file">
+                    <!-- 첨부된 파일 갯수 -->
+                    <input type="hidden" name="write_file_num" id="write_file_num" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>의뢰 스펙 문서 (최대 5개까지 업로드 가능)</label>
+                    <input type="file" class="btn btn-default" name="file" id="files" multiple>
                 </div>
 
                 <div class="form-group">
@@ -140,12 +146,6 @@
                 </div>
 
             </form>
-
-            <!--<form action="/file_upload/req_spec" method="post" enctype="multipart/form-data">
-                <input type="file" name="file">
-                <input type="submit">
-            </form>
-            -->
 
         </div>
     </div>
@@ -155,25 +155,25 @@
 <script type='text/javascript'>
 
     var lng_num = 1;    // index를 증가시키기 위한 변수
-        function add_item(){
-            var base = document.createElement('div');
-            base.innerHTML = document.getElementById('pre_set').innerHTML;
+    function add_item(){
+        var base = document.createElement('div');
+        base.innerHTML = document.getElementById('pre_set').innerHTML;
 
-            // language 개수
-            var new_name_div = lng_num;
-            var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
-            var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
+        // language 개수
+        var new_name_div = lng_num;
+        var new_name_type = base.getElementsByTagName("select")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
+        var new_name_skill = base.getElementsByTagName("input")[0].getAttribute("name").slice(0, -3)+'['+lng_num+']';
 
-            base.setAttribute("name", new_name_div);
-            base.getElementsByTagName("select")[0].setAttribute("name", new_name_type);
-            for(var i=0; i<5;i++){
-                base.getElementsByTagName("input")[i].setAttribute("name", new_name_skill);
-            }
-            
-            //console.log(base);
-            document.getElementById('field').appendChild(base);
-            lng_num++;
+        base.setAttribute("name", new_name_div);
+        base.getElementsByTagName("select")[0].setAttribute("name", new_name_type);
+        for(var i=0; i<5;i++){
+            base.getElementsByTagName("input")[i].setAttribute("name", new_name_skill);
         }
+        
+        //console.log(base);
+        document.getElementById('field').appendChild(base);
+        lng_num++;
+    }
 
     function remove_item(obj){
         // 지우려는 div의 아이디
@@ -182,6 +182,17 @@
     }
 
     $('#form').submit(function(){
+        
+        // 첨부 파일 갯수 확인
+        var file_num = $('#files')[0].files.length;
+        alert(file_num);
+        if(file_num>5){
+            alert('의뢰 스펙 문서는 최대 5개까지만 첨부 가능합니다.');
+            return false;
+        }
+        document.getElementById("write_file_num").value = file_num;
+
+        // 의뢰 모집 마감 날짜 확인
         var end = $('#write_end').val();
         var eyear = Number(end.slice(0, 4));
         var emonth = Number(end.slice(5, 7));
@@ -189,7 +200,7 @@
 
         var today =  new Date();
         var tyear = today.getFullYear();
-        var tmonth = today.getMonth();
+        var tmonth = today.getMonth()+1;
         var tdate = today.getDate();
         
         if(eyear<tyear){
@@ -213,6 +224,13 @@
         else{
             return true;
         }
+
+    });
+
+    $('#files').change(function(){
+        var files = $(this)[0].files;
+        if(files.length > 5)
+            alert("의뢰 스펙 문서는 최대 5개까지만 업로드 가능합니다.");
     });
 </script>
 

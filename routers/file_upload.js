@@ -9,6 +9,7 @@ const db = require('../modules/db');
 // disk storage
 
 // 의뢰 작성하면서 의뢰 스펙 첨부
+var count = 0;
 const storage_spec_from_write = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/upload/req_spec');
@@ -28,29 +29,38 @@ const storage_spec_from_write = multer.diskStorage({
     var lng = req.body.write_lng;
     var skill = req.body.write_skill;
 
-    // 리퀘스트 insert
-    var queryR = "INSERT INTO REQUEST (Client_id, Title, Pay, Apply_start_date, Apply_end_date, Min_career) VALUES ('"+id+"', '"+title+"', '"+pay+"', '"+today+"', '"+end+"', '"+min_career+"');"
-    var resultR = await db.getQueryResult(queryR);
+    if(count == 0){
+      // 리퀘스트 insert
+      var queryR = "INSERT INTO REQUEST (Client_id, Title, Pay, Apply_start_date, Apply_end_date, Min_career) VALUES ('"+id+"', '"+title+"', '"+pay+"', '"+today+"', '"+end+"', '"+min_career+"');"
+      var resultR = await db.getQueryResult(queryR);
+    }
 
     // 리퀘스트 id 가져오기
     var queryI = "SELECT MAX(Id) FROM REQUEST;";
     var resultI = await db.getQueryResult(queryI);
     var reqId = Object.values(resultI)[0]['MAX(Id)'];
-
-    // 리퀘스트 pl 조건 insert
-    var queryL = [];
-    for(var i=0; i<lng.length; i++){
-      if(lng[i]==undefined) // this if for the deleted object
-        continue;
-      queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
+    
+    if(count == 0){
+      // 리퀘스트 pl 조건 insert
+      var queryL = [];
+      for(var i=0; i<lng.length; i++){
+        if(lng[i]==undefined) // this if for the deleted object
+          continue;
+        queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
+      }
+      for(var i=0; i<queryL.length; i++){
+        await db.getQueryResult(queryL[i]);
+      }
     }
-    for(var i=0; i<queryL.length; i++){
-      await db.getQueryResult(queryL[i]);
-    }
-
+    
     // 리퀘스트 스펙 문서 insert
     var queryRF = "INSERT INTO REQUEST_FILE (Request_id, File_id) VALUES ('"+reqId+"', '"+file.originalname+"');";
     var resultRF = await db.getQueryResult(queryRF);
+
+    count = count+1;
+    if(count == req.body.write_file_num){
+      count = 0;
+    }
 
     cb(null, reqId+'_'+file.originalname);
   })
