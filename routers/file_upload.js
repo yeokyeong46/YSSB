@@ -9,6 +9,7 @@ const db = require('../modules/db');
 // disk storage
 
 // 의뢰 작성하면서 의뢰 스펙 첨부
+var count = 0;
 const storage_spec_from_write = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/upload/req_spec');
@@ -28,29 +29,44 @@ const storage_spec_from_write = multer.diskStorage({
     var lng = req.body.write_lng;
     var skill = req.body.write_skill;
 
-    // 리퀘스트 insert
-    var queryR = "INSERT INTO REQUEST (Client_id, Title, Pay, Apply_start_date, Apply_end_date, Min_career) VALUES ('"+id+"', '"+title+"', '"+pay+"', '"+today+"', '"+end+"', '"+min_career+"');"
-    var resultR = await db.getQueryResult(queryR);
+    if(count == 0){
+      // 리퀘스트 insert
+      var queryR = "INSERT INTO REQUEST (Client_id, Title, Pay, Apply_start_date, Apply_end_date, Min_career) VALUES ('"+id+"', '"+title+"', '"+pay+"', '"+today+"', '"+end+"', '"+min_career+"');"
+      var resultR = await db.getQueryResult(queryR);
+    }
 
     // 리퀘스트 id 가져오기
     var queryI = "SELECT MAX(Id) FROM REQUEST;";
     var resultI = await db.getQueryResult(queryI);
     var reqId = Object.values(resultI)[0]['MAX(Id)'];
-
-    // 리퀘스트 pl 조건 insert
-    var queryL = [];
-    for(var i=0; i<lng.length; i++){
-      if(lng[i]==undefined) // this if for the deleted object
-        continue;
-      queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
+    
+    if(count == 0){
+      // 리퀘스트 pl 조건 insert
+      var queryL = [];
+      var queryLC = [];
+      for(var i=0; i<lng.length; i++){
+        if(skill[i]==undefined) // this if for the deleted object
+          continue;
+        queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
+        queryLC.push("SELECT * FROM REQUEST_LANGUAGE_SKILL WHERE Request_id='"+reqId+"' and Language='"+lng[i]+"';");
+      }
+      for(var i=0; i<queryL.length; i++){
+        var resultLC = await db.getQueryResult(queryLC[i]);
+        if(Object.keys(resultLC).length > 0){ // 이미 이 언어에 대한 level이 존재하므로 스킵 for 같은 언어 중복 상황에 대한 핸들링
+          continue;
+        }
+        await db.getQueryResult(queryL[i]);
+      }
     }
-    for(var i=0; i<queryL.length; i++){
-      await db.getQueryResult(queryL[i]);
-    }
-
+    
     // 리퀘스트 스펙 문서 insert
     var queryRF = "INSERT INTO REQUEST_FILE (Request_id, File_id) VALUES ('"+reqId+"', '"+file.originalname+"');";
     var resultRF = await db.getQueryResult(queryRF);
+
+    count = count+1;
+    if(count == req.body.write_file_num){
+      count = 0;
+    }
 
     cb(null, reqId+'_'+file.originalname);
   })
@@ -75,15 +91,21 @@ const storage_ptf_from_signup = multer.diskStorage({
     var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
     var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '1', '1', '"+file.originalname+"');";
     var queryL = [];
+    var queryLC = [];
     for(var i=0; i<lng.length; i++){
-      if(lng[i]==undefined) // this if for the deleted object
+      if(skill[i]==undefined) // this if for the deleted object & 랭귀지 레벨을 선택하지 않았을때
         continue;
       queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
+      queryLC.push("SELECT * FROM FREELANCER_LANGUAGE_SKILL WHERE Freelancer_id='"+id+"' and Language='"+lng[i]+"';");
     }
 
     var resultF = await db.getQueryResult(queryF);
     var resultP = await db.getQueryResult(queryP);
     for(var i=0; i<queryL.length; i++){
+      var resultLC = await db.getQueryResult(queryLC[i]);
+      if(Object.keys(resultLC).length > 0){ // 이미 이 언어에 대한 level이 존재하므로 스킵 for 같은 언어 중복 상황에 대한 핸들링
+        continue;
+      }
       await db.getQueryResult(queryL[i]);
     }
     
@@ -152,15 +174,46 @@ const up_add_req_spec = upload_add_req_spec.fields([{name: 'file', maxCount: 5}]
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 // router
-router.post('/req_spec_from_write', up_spec_from_write, wrapper.asyncMiddleware(async (req, res, next) => {
+router.post('/req_spec_from_write', up_spec_from_write, (req, res, next) => {
   var msg = '<script type="text/javascript">alert("의뢰가 작성되었습니다!");window.location.href="/request_list"</script>';
   res.send(msg);
-}));
+});
 
-router.post('/ptf_from_signup', up_ptf_from_signup, (req, res, next) => {
+router.post('/ptf_from_signup', up_ptf_from_signup, wrapper.asyncMiddleware(async (req, res, next) => {
+  console.log(req.body);
+  if(req.body.signup_file_num == 0){
+    var id = req.body.signup_id;
+    var pwd = req.body.signup_pwd;
+    var name = req.body.signup_name;
+    var age = req.body.signup_age;
+    var career = req.body.signup_career;
+    var major = req.body.signup_major;
+    var phone = req.body.signup_phone;
+    var lng = req.body.signup_lng;
+    var skill = req.body.signup_skill;
+
+    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
+    var queryL = [];
+    var queryLC = [];
+    for(var i=0; i<lng.length; i++){
+      if(skill[i]==undefined) // this if for the deleted object & 랭귀지 레벨을 선택하지 않았을때
+        continue;
+      queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
+      queryLC.push("SELECT * FROM FREELANCER_LANGUAGE_SKILL WHERE Freelancer_id='"+id+"' and Language='"+lng[i]+"';");
+    }
+
+    var resultF = await db.getQueryResult(queryF);
+    for(var i=0; i<queryL.length; i++){
+      var resultLC = await db.getQueryResult(queryLC[i]);
+      if(Object.keys(resultLC).length > 0){ // 이미 이 언어에 대한 level이 존재하므로 스킵 for 같은 언어 중복 상황에 대한 핸들링
+        continue;
+      }
+      await db.getQueryResult(queryL[i]);
+    }
+  }
   var msg = '<script type="text/javascript">alert("새로운 프리랜서가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
-});
+}));
 
 router.post('/portfolio', up_ptf, (req, res, next) => {
   res.redirect('/freelancer_profile/'+req.body.freelancer_id);
