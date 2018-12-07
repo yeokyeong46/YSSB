@@ -162,15 +162,40 @@ const up_add_req_spec = upload_add_req_spec.fields([{name: 'file', maxCount: 5}]
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 // router
-router.post('/req_spec_from_write', up_spec_from_write, wrapper.asyncMiddleware(async (req, res, next) => {
+router.post('/req_spec_from_write', up_spec_from_write, (req, res, next) => {
   var msg = '<script type="text/javascript">alert("의뢰가 작성되었습니다!");window.location.href="/request_list"</script>';
   res.send(msg);
-}));
+});
 
-router.post('/ptf_from_signup', up_ptf_from_signup, (req, res, next) => {
+router.post('/ptf_from_signup', up_ptf_from_signup, wrapper.asyncMiddleware(async (req, res, next) => {
+  console.log(req.body);
+  if(req.body.signup_file_num == 0){
+    var id = req.body.signup_id;
+    var pwd = req.body.signup_pwd;
+    var name = req.body.signup_name;
+    var age = req.body.signup_age;
+    var career = req.body.signup_career;
+    var major = req.body.signup_major;
+    var phone = req.body.signup_phone;
+    var lng = req.body.signup_lng;
+    var skill = req.body.signup_skill;
+
+    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
+    var queryL = [];
+    for(var i=0; i<lng.length; i++){
+      if(lng[i]==undefined) // this if for the deleted object
+        continue;
+      queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
+    }
+
+    var resultF = await db.getQueryResult(queryF);
+    for(var i=0; i<queryL.length; i++){
+      await db.getQueryResult(queryL[i]);
+    }
+  }
   var msg = '<script type="text/javascript">alert("새로운 프리랜서가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
-});
+}));
 
 router.post('/portfolio', up_ptf, (req, res, next) => {
   res.redirect('/freelancer_profile/'+req.body.freelancer_id);

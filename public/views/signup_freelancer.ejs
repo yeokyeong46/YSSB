@@ -142,9 +142,13 @@
                 </div>
 
                 <div class="form-group">
+                    <!-- 첨부된 파일 갯수 -->
+                    <input type="hidden" name="signup_file_num" id="signup_file_num" value="0">
+                </div>
+
+                <div class="form-group">
                     <label for="portfolio">Portfolio</label>
-                    <!--<input type="text" class="form-control" name="signup_ptf" placeholder="Portfolio Title">-->
-                    <input type="file" class="btn btn-default" name="file">
+                    <input type="file" class="btn btn-default" name="file" id="files">
                 </div>
 
                 <div class="form-group">
@@ -196,6 +200,13 @@
                 return false;
             }
 
+            // 첨부 파일 갯수 확인
+            var file_num = $('#files')[0].files.length;
+            if(file_num>5){
+                alert('의뢰 스펙 문서는 최대 5개까지만 첨부 가능합니다.');
+                return false;
+            }
+            document.getElementById("signup_file_num").value = file_num;
             // - - - - - - - - - - - - - - - - - - - - //
             // empty 문자 있으면 거절이랑, 랭귀지 중복이랑, 레벨 없는 경우 거절해줘야 함
             // - - - - - - - - - - - - - - - - - - - - //
