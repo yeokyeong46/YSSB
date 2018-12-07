@@ -95,13 +95,13 @@
         </div> 
 <!--
         <div id="freelancer_apply">
-          <h3>신청 가능한 의뢰입니다.</h3>
+          <h3>의뢰 신청</h3>
           <table>
             <tbody>
             </tbody>
           </table>
         </div>
--->
+
         <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
 
         <table class="table table-striped" id="language">
@@ -202,7 +202,7 @@
         </div>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
         <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
@@ -316,28 +316,39 @@
                 console.log(err);
                 }
             });
-/*
+
             $.ajax({
                 type: 'get',
                 url: '/get_request_info/freelancer_apply/'+Id,
                 success: function(data) {
                     $('#freelancer_apply tbody').html("");
-                    for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = '<tr>';
-                        var user_id = <%-JSON.stringify(sess_id)%>;
-                        <% if (sess_level==2) { %>
-                            if (data[i].State == "APPLIABLE") {
-                                will_be_append = will_be_append.concat('<tr><th>의뢰 신청</th><td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td></tr>');
-                            }
-                        <% } %>
-                        will_be_append = will_be_append.concat('</tr>');
-                        $('#freelancer_apply tbody').append(will_be_append);
+                    if (data.length == 0) { //언어 자격 만족
+                      var will_be_append = '<tr>';
+                      var user_id = <%-JSON.stringify(sess_id)%>;
+                      <% if (sess_level==2) { %>
+                          if (data[i].State == "APPLIABLE") {
+                              will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td>');
+                          }
+                      <% } %>
+                      will_be_append = will_be_append.concat('</tr>');
+                      $('#freelancer_apply tbody').append(will_be_append);
+                    }
+                    else {
+                      var will_be_append = '<tr>';
+                      var user_id = <%-JSON.stringify(sess_id)%>;
+                      <% if (sess_level==2) { %>
+                          if (data[i].State == "APPLIABLE") {
+                              will_be_append = will_be_append.concat('<td>의뢰자격요건에 부합하지 않습니다.</td>');
+                          }
+                      <% } %>
+                      will_be_append = will_be_append.concat('</tr>');
+                      $('#freelancer_apply tbody').append(will_be_append);
                     }
                 },
                 error: function(err) {
                     console.log(err);
                 }
-            });*/
+            });
 
             $.ajax({
                 type: 'get',
@@ -514,7 +525,7 @@
                 }
             $.ajax({
                 type: 'post',
-                url: '/get_request_info/apply',
+                url: '/get_request_info/freelancer_apply',
                 data: v,
                 success: function(data) {
                     window.location="/request_info/"+Id;

@@ -35,7 +35,7 @@
             </button>
             <a class="navbar-brand" href="/index">YSSB</a>
           </div>
-      
+
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
@@ -43,7 +43,7 @@
                 <% if(sess_level==0) { %>
                 <li><a href="/manager_page">MY PAGE</a></li>
                 <% } else if (sess_level==1) { %>
-                <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li> 
+                <li><a href="/client_profile/<%= sess_id %>">MY PAGE</a></li>
                 <% } else if (sess_level==2) { %>
                 <li><a href="/freelancer_profile/<%= sess_id %>">MY PAGE</a></li>
                 <% }%>
@@ -64,22 +64,9 @@
       </nav>
     <body>
         <h3>의뢰 거부 메시지</h3>
-        <div id="message_info">
-              <h3>의뢰 정보</h3>
-              <table style="width :100%;" class="table table-striped">
-              <thead>
-                  <tr>
-                      <th>의뢰번호</th>
-                      <th>프리랜서</th>
-                  </tr>
-              </thead>
-              <tbody>
-              </tbody>
-          </table>
-        </div>
 
         <div>
-          <h3>메시지 보내기(admin, client일 때만 보이게 권한설정)</h3>
+          <h3>메시지 보내기</h3>
           <form class="form-inline" id="send_message">
               <input type="text" class="form-control" id="new_message" placeholder="enter new mesage">
               <input type="submit" class="btn btn-default" value="SEND">
@@ -113,24 +100,6 @@
           var path_array = window.location.pathname.split('/');
           var request_id = path_array[2];
 
-            $.ajax({
-                type: 'get',
-                url: '/get_view_message/view_message_info/'+request_id,
-                success: function(data) {
-                    console.log(data);
-                    $('#message_info tbody').html("");
-                    for(var i = 0 ; i < data.length; i ++) {
-                        var will_be_append = $('<tr>'+
-                                                    '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Request_id+'</a></td>'+
-                                                    '<td><a href="/freelancer_profile/'+data[i].Participant_id+'">'+data[i].Participant_id+'</td>'+
-                                                '</tr>');
-                        $('#message_info tbody').append(will_be_append);
-                    }
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
             $('#send_message').submit(function(){
                 var v = {
                         id: request_id,
