@@ -155,14 +155,13 @@
             </tbody>
         </table>
 
-        <% if (sess_id==sess_page_id) { %>
-        <div>
+        <div id="add_portfolio">
             <form action="/file_upload/portfolio" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="freelancer_id" value="<%=sess_page_id%>">
                 <input type="file" name="file">
                 <input type="submit">
             </form>
         </div>
-        <% } %>
 
         <hr>
 
@@ -206,6 +205,12 @@
 
         $(function(){
 
+            <% if (sess_id==sess_page_id || sess_level==0){ %>
+                document.getElementById('add_portfolio').style.display = "block";
+            <% } else { %>
+                document.getElementById('add_portfolio').style.display = "none";
+            <% } %>
+            
             $.ajax({
                 type: 'get',
                 url: '/get_freelancer_profile/get_profile/'+Id,

@@ -98,7 +98,7 @@ const storage_ptf = multer.diskStorage({
   },
   filename: wrapper.asyncMiddleware(async(req, file, cb)=>{
     // get portfolio number
-    var query = "SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+req.session.curr_id+"'";
+    var query = "SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+req.body.freelancer_id+"'";
     var ret = await db.getQueryResult(query);
     const max = ret[0]['MAX(Portfolio_id)'];
     var portfolio_id;
@@ -107,10 +107,10 @@ const storage_ptf = multer.diskStorage({
     else
         portfolio_id = 1;
     console.log(portfolio_id);
-    var query2 = "INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+req.session.curr_id+"',"+portfolio_id+",1,'"+file.originalname+"')";
+    var query2 = "INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+req.body.freelancer_id+"',"+portfolio_id+",1,'"+file.originalname+"')";
     var ret2 = await db.getQueryResult(query2);
 
-    cb(null, req.session.curr_id+'_'+portfolio_id+'_'+file.originalname)
+    cb(null, req.body.freelancer_id+'_'+portfolio_id+'_'+file.originalname)
   })
 });
 
@@ -163,7 +163,7 @@ router.post('/ptf_from_signup', up_ptf_from_signup, (req, res, next) => {
 });
 
 router.post('/portfolio', up_ptf, (req, res, next) => {
-  res.redirect('/freelancer_profile/'+req.session.curr_id);
+  res.redirect('/freelancer_profile/'+req.body.freelancer_id);
 });
 
 router.post('/add_req_spec', up_add_req_spec, (req, res, next) => {
