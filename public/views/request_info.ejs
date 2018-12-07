@@ -92,17 +92,18 @@
                 <input type="text" class="form-control" id="update_value" placeholder="new value">
                 <input type="submit" class="btn btn-default" value="UPDATE">
             </form>
-        </div> 
-<!--
-        <div id="freelancer_apply">
+        </div>
+
+        <div id="apply_visible">
           <h3>의뢰 신청</h3>
           <table>
             <tbody>
+              <td>
+                <input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청">
+              </td>
             </tbody>
           </table>
         </div>
-
-        <!--어드민이거나 의뢰의 의뢰자이면, 수정 가능-->
 
         <table class="table table-striped" id="language">
             <caption>필요 언어</caption>
@@ -257,7 +258,7 @@
                             will_be_append = will_be_append.concat('<td>의뢰가 시작되지 않음</td>');
                         else
                             will_be_append = will_be_append.concat('<td>'+data[i].Working_start_date+'</td>');
-                        
+
                         will_be_append = will_be_append.concat('</tr>'+'<tr>'+'<th>의뢰 마감날짜</th>');
 
                         if(data[i].Working_end_date == null)
@@ -271,28 +272,11 @@
                                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                                 '</tr>');
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        /*
-                        var update_string = '<tr>'+
-                                                '<th>의뢰수정</th>'+
-                                                '<td>'+
-                                                '<form class="form-inline" id="update">'+
-                                                    '<select id="update_attr">'+
-                                                        '<option value="Title">Title</option>'+
-                                                        '<option value="Pay">Pay</option>'+
-                                                        '<option value="Min_career">Min Career</option>'+
-                                                    '</select>'+
-                                                    '<input type="text" class="form-control" id="update_value" placeholder="new value">'+
-                                                    '<input type="submit" class="btn btn-default" value="UPDATE">'+
-                                                '</from>'+
-                                                '</td>'+
-                                            '</tr>';
-                        */
+
                         if (user_id == Cid) {
-                            //will_be_append = will_be_append.concat(update_string);
                             console.log(data[i].Title);
                         }
                         <% if (sess_level==0) { %>
-                            //will_be_append = will_be_append.concat(update_string);
                             if (data[i].State == "APPLIABLE") {
                                 will_be_append = will_be_append.concat('<tr><th>의뢰 삭제</th><td><input type="button" class="btn btn-default" onclick="delete_request(\''+data[i].Id+'\')" value="의뢰 삭제"></td></tr>');
                             }
@@ -318,37 +302,20 @@
             });
 
             $.ajax({
-                type: 'get',
-                url: '/get_request_info/freelancer_apply/'+Id,
-                success: function(data) {
-                    $('#freelancer_apply tbody').html("");
-                    if (data.length == 0) { //언어 자격 만족
-                      var will_be_append = '<tr>';
-                      var user_id = <%-JSON.stringify(sess_id)%>;
-                      <% if (sess_level==2) { %>
-                          if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청"></td>');
-                          }
-                      <% } %>
-                      will_be_append = will_be_append.concat('</tr>');
-                      $('#freelancer_apply tbody').append(will_be_append);
-                    }
-                    else {
-                      var will_be_append = '<tr>';
-                      var user_id = <%-JSON.stringify(sess_id)%>;
-                      <% if (sess_level==2) { %>
-                          if (data[i].State == "APPLIABLE") {
-                              will_be_append = will_be_append.concat('<td>의뢰자격요건에 부합하지 않습니다.</td>');
-                          }
-                      <% } %>
-                      will_be_append = will_be_append.concat('</tr>');
-                      $('#freelancer_apply tbody').append(will_be_append);
-                    }
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
+               type: 'get',
+               url: '/get_request_info/freelancer_apply/'+Id,
+               success: function(data) {
+                   if (data.length == 0) { //자격 만족, 구인 중 상태
+                     var user_id = <%-JSON.stringify(sess_id)%>;
+                     <% if (sess_level==2) { %> //사용자가 프리랜서
+                         document.getElementById('apply_visible').style.display = "block";
+                     <% } %>
+                   }
+               },
+               error: function(err) {
+                   console.log(err);
+               }
+           });
 
             $.ajax({
                 type: 'get',
@@ -511,9 +478,9 @@
                     }
                 });
             });
-            
+
         });
-        
+
         function view_message_button() {
           window.location="/view_message/"+Id;
         }
