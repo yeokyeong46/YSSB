@@ -25,6 +25,26 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     res.json({success: true});
 }));
 
+router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const language = req.body.language;
+    const level = req.body.level;
+    // db에 존재하는 언어이면 update, 아니면 insert
+    var tmp_ret = await db.getQueryResult("SELECT Language FROM request_language_skill WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    console.log(tmp_ret);
+    var ret;
+    if (Object.keys(tmp_ret).length==0) {
+        ret = await db.getQueryResult("INSERT INTO request_language_skill(Request_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
+    }
+    else {
+        ret = await db.getQueryResult("UPDATE request_language_skill SET level="+level+" WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    }
+    console.log(ret);
+    console.log(typeof ret);
+    res.json(ret);
+}));
+
+
 router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id; //get request_id
     console.log(Id);
