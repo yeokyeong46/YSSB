@@ -163,47 +163,49 @@
         </div>
 
         <hr>
+        <!-- 진행중인 리퀘스트, 신청중인 리퀘스트, 거절된 완료 요청 목록은 관리자 또는 본인만 열람가능 -->
+        <div id="freelancer_request_info"> 
+            <table class="table table-striped" id="work">
+                <caption>진행중</caption>
+                <thead>
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Title</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            
+            <hr>
 
-        <table class="table table-striped" id="work">
-            <caption>진행중</caption>
-            <thead>
-                <tr>
-                    <th>Request ID</th>
-                    <th>Title</th>
-                    <th>State</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        
-        <hr>
+            <table class="table table-striped" id="apply">
+                <caption>신청</caption>
+                <thead>
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Title</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
-        <table class="table table-striped" id="apply">
-            <caption>신청</caption>
-            <thead>
-                <tr>
-                    <th>Request ID</th>
-                    <th>Title</th>
-                    <th>State</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-
-        <table class="table table-striped" id="rejected_submit">
-            <caption>거절된 완료 요청</caption>
-            <thead>
-                <tr>
-                    <th>Request Title</th>
-                    <th>Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+            <table class="table table-striped" id="rejected_submit">
+                <caption>거절된 완료 요청</caption>
+                <thead>
+                    <tr>
+                        <th>Request Title</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
 
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -219,8 +221,10 @@
 
             <% if (sess_id==sess_page_id || sess_level==0){ %>
                 document.getElementById('add_portfolio').style.display = "block";
+                document.getElementById('freelancer_request_info').style.display = "block";
             <% } else { %>
                 document.getElementById('add_portfolio').style.display = "none";
+                document.getElementById('freelancer_request_info').style.display = "none";
             <% } %>
             
             $.ajax({
@@ -341,6 +345,7 @@
                         var will_be_append = '<tr>'+
                                                     '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Title+'</a></td>'+
                                                     '<td>'+data[i].Date+'</td>';
+                        // 거절된 의뢰 리스트는 관리자만 삭제가능
                         <% if (sess_level==0) { %>
                         will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_rejected_submit(\''+data[i].Id+'\')" value="-"></td>');
                         <% } %>
