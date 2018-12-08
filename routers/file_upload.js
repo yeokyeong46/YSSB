@@ -42,21 +42,23 @@ const storage_spec_from_write = multer.diskStorage({
     var reqId = Object.values(resultI)[0]['MAX(Id)'];
     
     if(count == 0){
-      // 리퀘스트 pl 조건 insert
-      var queryL = [];
-      var queryLC = [];
-      for(var i=0; i<lng.length; i++){
-        if(skill[i]==undefined) // this if for the deleted object
-          continue;
-        queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
-        queryLC.push("SELECT * FROM REQUEST_LANGUAGE_SKILL WHERE Request_id='"+reqId+"' and Language='"+lng[i]+"';");
-      }
-      for(var i=0; i<queryL.length; i++){
-        var resultLC = await db.getQueryResult(queryLC[i]);
-        if(Object.keys(resultLC).length > 0){ // 이미 이 언어에 대한 level이 존재하므로 스킵 for 같은 언어 중복 상황에 대한 핸들링
-          continue;
+      if(skill != undefined){ // pl 조건이 있다면
+        // 리퀘스트 pl 조건 insert
+        var queryL = [];
+        var queryLC = [];
+        for(var i=0; i<skill.length; i++){
+          if(skill[i]==undefined) // this if for the deleted object
+            continue;
+          queryL.push("INSERT INTO REQUEST_LANGUAGE_SKILL (Request_id, Language, Level) VALUES ('"+reqId+"', '"+lng[i]+"', '"+skill[i]+"');");
+          queryLC.push("SELECT * FROM REQUEST_LANGUAGE_SKILL WHERE Request_id='"+reqId+"' and Language='"+lng[i]+"';");
         }
-        await db.getQueryResult(queryL[i]);
+        for(var i=0; i<queryL.length; i++){
+          var resultLC = await db.getQueryResult(queryLC[i]);
+          if(Object.keys(resultLC).length > 0){ // 이미 이 언어에 대한 level이 존재하므로 스킵 for 같은 언어 중복 상황에 대한 핸들링
+            continue;
+          }
+          await db.getQueryResult(queryL[i]);
+        }
       }
     }
     
@@ -93,7 +95,7 @@ const storage_ptf_from_signup = multer.diskStorage({
     var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '1', '1', '"+file.originalname+"');";
     var queryL = [];
     var queryLC = [];
-    for(var i=0; i<lng.length; i++){
+    for(var i=0; i<skill.length; i++){
       if(skill[i]==undefined) // this if for the deleted object & 랭귀지 레벨을 선택하지 않았을때
         continue;
       queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
@@ -196,7 +198,7 @@ router.post('/ptf_from_signup', up_ptf_from_signup, wrapper.asyncMiddleware(asyn
     var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', SHA2('"+pwd+"', "+config.db_config.length+"), '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
     var queryL = [];
     var queryLC = [];
-    for(var i=0; i<lng.length; i++){
+    for(var i=0; i<skill.length; i++){
       if(skill[i]==undefined) // this if for the deleted object & 랭귀지 레벨을 선택하지 않았을때
         continue;
       queryL.push("INSERT INTO FREELANCER_LANGUAGE_SKILL (Freelancer_id, Language, Level) VALUES ('"+id+"', '"+lng[i]+"', '"+skill[i]+"');");
