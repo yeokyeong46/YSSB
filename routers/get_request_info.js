@@ -115,6 +115,32 @@ router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next)
 }));
 
 router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Request_id = req.body.Request_id;
+    const Participant_id = req.body.Participant_id;
+    const Work_state = req.body.Work_state;
+
+    var now =  new Date();
+    var year = now.getFullYear();
+    var month = ("0" + (now.getMonth()+1)).slice(-2);
+    var date = ("0" + now.getDate()).slice(-2);
+    var today = year+"-"+month+"-"+date;
+
+    //완료된 의뢰를 포트폴리오에 자동으로 저장하기
+    // 포트폴리오 아이디 구하기
+    var tmp_ret = await db.getQueryResult("SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+Participant_id+"'");
+    const max = tmp_ret[0]['MAX(Portfolio_id)'];
+    var portfolio_id=1;
+    if (max!=null)
+        portfolio_id = max+1;
+    var ret3 =await db.getQueryResult("INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, Internal_request_id) VALUES ('"+Participant_id+"','"+portfolio_id+"',0,"+Request_id+")");
+
+    var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+    var ret2 = await db.getQueryResult("UPDATE REQUEST SET Working_end_date='"+today+"' ,State='"+Work_state+"' WHERE Id="+Request_id);
+    console.log(ret);
+    res.json({success: true});
+}));
+
+router.post('/completed_reject', wrapper.asyncMiddleware(async (req, res, next) =>{
   const Request_id = req.body.Request_id;
   const Participant_id = req.body.Participant_id;
   const Work_state = req.body.Work_state;
@@ -126,18 +152,10 @@ router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) 
   var today = year+"-"+month+"-"+date;
 
   var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
-  var ret2 = await db.getQueryResult("UPDATE REQUEST SET Working_end_date='"+today+"' ,State='"+Work_state+"' WHERE Id="+Request_id);
+  var ret2 = await db.getQueryResult("INSERT INTO rejected_submit(Request_id, Participant_id, Date) VALUES ("+Request_id+",'"+Participant_id+"','"+today+"')");
   console.log(ret);
-    res.json({success: true});
-}));
-
-router.post('/completed_reject', wrapper.asyncMiddleware(async (req, res, next) =>{
-  const Request_id = req.body.Request_id;
-  const Participant_id = req.body.Participant_id;
-  const Work_state = req.body.Work_state;
-  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
   console.log(ret);
-    res.json({success: true});
+  res.json({success: true});
 }));
 
 router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
