@@ -63,26 +63,8 @@ router.get('/freelancer_apply/:Id', wrapper.asyncMiddleware(async (req, res, nex
 router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
-    //query1 언어 요건 충족되면 아무것도 출력하지 않음
-    console.log("nth passed");
-    var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
-    var ret = await db.getQueryResult(query1);
-    console.log("query1 passed");
-    if (Object.keys(ret).length==0){
-      //query2 최소경력 충족되면 아무것도 출력하지 않음
-      console.log("언어요건충족");
-      var query2 = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = "+Request_id+" AND F.Career < R.Min_career;";
-      ret = await db.getQueryResult(query2);
-      if (Object.keys(ret).length==0){
-        console.log("최소경력충족");
-        var query3 = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
-        if (Object.keys(query3).length !=0){
-          var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
-          var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
-          console.log(ret);
-        }
-      }
-    }
+    // 어플라이 버튼이 보이는거면 조건이 이미 충족된 상태이므로 바로 신청 가능
+    var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
     res.json(ret);
 }));
 
@@ -133,11 +115,28 @@ router.post('/completed_request', wrapper.asyncMiddleware(async (req, res, next)
 }));
 
 router.post('/completed_accept', wrapper.asyncMiddleware(async (req, res, next) =>{
-  const Request_id = req.body.Request_id;
-  const Participant_id = req.body.Participant_id;
-  const Work_state = req.body.Work_state;
-  var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
-  console.log(ret);
+    const Request_id = req.body.Request_id;
+    const Participant_id = req.body.Participant_id;
+    const Work_state = req.body.Work_state;
+
+    var now =  new Date();
+    var year = now.getFullYear();
+    var month = ("0" + (now.getMonth()+1)).slice(-2);
+    var date = ("0" + now.getDate()).slice(-2);
+    var today = year+"-"+month+"-"+date;
+
+    //완료된 의뢰를 포트폴리오에 자동으로 저장하기
+    // 포트폴리오 아이디 구하기
+    var tmp_ret = await db.getQueryResult("SELECT MAX(Portfolio_id) FROM portfolio WHERE Freelancer_id='"+Participant_id+"'");
+    const max = tmp_ret[0]['MAX(Portfolio_id)'];
+    var portfolio_id=1;
+    if (max!=null)
+        portfolio_id = max+1;
+    var ret3 =await db.getQueryResult("INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, Internal_request_id) VALUES ('"+Participant_id+"','"+portfolio_id+"',0,"+Request_id+")");
+
+    var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+    var ret2 = await db.getQueryResult("UPDATE REQUEST SET Working_end_date='"+today+"' ,State='"+Work_state+"' WHERE Id="+Request_id);
+    console.log(ret);
     res.json({success: true});
 }));
 
@@ -145,9 +144,18 @@ router.post('/completed_reject', wrapper.asyncMiddleware(async (req, res, next) 
   const Request_id = req.body.Request_id;
   const Participant_id = req.body.Participant_id;
   const Work_state = req.body.Work_state;
+
+  var now =  new Date();
+  var year = now.getFullYear();
+  var month = ("0" + (now.getMonth()+1)).slice(-2);
+  var date = ("0" + now.getDate()).slice(-2);
+  var today = year+"-"+month+"-"+date;
+
   var ret = await db.getQueryResult("UPDATE WORK SET State='"+Work_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+  var ret2 = await db.getQueryResult("INSERT INTO rejected_submit(Request_id, Participant_id, Date) VALUES ("+Request_id+",'"+Participant_id+"','"+today+"')");
   console.log(ret);
-    res.json({success: true});
+  console.log(ret);
+  res.json({success: true});
 }));
 
 router.get('/get_applier_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
@@ -164,8 +172,16 @@ router.post('/accept_request', wrapper.asyncMiddleware(async (req, res, next) =>
     const Participant_id = req.body.Participant_id;
     const Apply_state = req.body.Apply_state;
     const Work_state = req.body.Work_state;
+
+    var now =  new Date();
+    var year = now.getFullYear();
+    var month = ("0" + (now.getMonth()+1)).slice(-2);
+    var date = ("0" + now.getDate()).slice(-2);
+    var today = year+"-"+month+"-"+date;
+
     var ret = await db.getQueryResult("UPDATE APPLY SET State='"+Apply_state+"' WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
     var ret2 = await db.getQueryResult("INSERT into WORK (Request_id, Participant_id, State) VALUES ('"+Request_id+"', '"+Participant_id+"', '"+Work_state+"')");
+    var ret3 = await db.getQueryResult("UPDATE request SET Working_start_date='"+today+"', State='"+Work_state+"' WHERE Id="+Request_id);
     console.log(ret);
     console.log(ret2);
     res.json({success: true});
