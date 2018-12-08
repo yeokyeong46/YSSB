@@ -17,5 +17,8 @@ module.exports={
   admin_config: {
     id: 'admin',
     pwd: 'admin'
+  },
+  db_config: {
+    length: 256
   }
 };

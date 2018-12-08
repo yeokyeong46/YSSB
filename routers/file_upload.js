@@ -4,6 +4,7 @@ const router = express.Router();
 const multer = require('multer');
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
+const config = require('../config');
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 // disk storage
@@ -88,7 +89,7 @@ const storage_ptf_from_signup = multer.diskStorage({
     var lng = req.body.signup_lng;
     var skill = req.body.signup_skill;
 
-    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
+    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', SHA2('"+pwd+"', "+config.db_config.length+"), '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
     var queryP = "INSERT INTO PORTFOLIO (Freelancer_id, Portfolio_id, Type, External_file) VALUES ('"+id+"', '1', '1', '"+file.originalname+"');";
     var queryL = [];
     var queryLC = [];
@@ -192,7 +193,7 @@ router.post('/ptf_from_signup', up_ptf_from_signup, wrapper.asyncMiddleware(asyn
     var lng = req.body.signup_lng;
     var skill = req.body.signup_skill;
 
-    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
+    var queryF = "INSERT INTO FREELANCER (Id, Password, Name, Age, Career, Major, Phone) VALUES ('"+id+"', SHA2('"+pwd+"', "+config.db_config.length+"), '"+name+"', '"+age+"', '"+career+"', '"+major+"', '"+phone+"');";
     var queryL = [];
     var queryLC = [];
     for(var i=0; i<lng.length; i++){

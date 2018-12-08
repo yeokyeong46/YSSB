@@ -33,8 +33,8 @@ router.post('/login', wrapper.asyncMiddleware(async (req, res, next) => {
   var id = req.body.login_id;
   var pwd = req.body.login_pwd;
 
-  var queryC = "SELECT * FROM CLIENT WHERE Id='"+id+"'and Password='"+pwd+"';";
-  var queryF = "SELECT * FROM FREELANCER WHERE Id='"+id+"'and Password='"+pwd+"';";
+  var queryC = "SELECT * FROM CLIENT WHERE Id='"+id+"'and Password=SHA2('"+pwd+"', "+config.db_config.length+");";
+  var queryF = "SELECT * FROM FREELANCER WHERE Id='"+id+"'and Password=SHA2('"+pwd+"', "+config.db_config.length+");";
 
   var resultC = await db.getQueryResult(queryC);
   var resultF = await db.getQueryResult(queryF);
@@ -111,7 +111,7 @@ router.post('/signup_client', wrapper.asyncMiddleware(async (req, res, next) => 
   var name = req.body.signup_name;
   var phone = req.body.signup_phone;
 
-  var queryC = "INSERT INTO CLIENT (Id, Password, Name, Phone) VALUES ('"+id+"', '"+pwd+"', '"+name+"', '"+phone+"');";
+  var queryC = "INSERT INTO CLIENT (Id, Password, Name, Phone) VALUES ('"+id+"', SHA2('"+pwd+"', "+config.db_config.length+"), '"+name+"', '"+phone+"');";
   var resultC = await db.getQueryResult(queryC);
 
   //console.log(resultC);
