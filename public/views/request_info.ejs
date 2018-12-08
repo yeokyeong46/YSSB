@@ -244,25 +244,25 @@
                                                     '<td>'+data[i].State+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>등록 날짜</th>'+
+                                                    '<th>의뢰신청 시작 날짜(의뢰 등록 날짜)</th>'+
                                                     '<td>'+data[i].Apply_start_date+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>신청 마감날짜</th>'+
+                                                    '<th>의뢰신청 마감 날짜</th>'+
                                                     '<td>'+data[i].Apply_end_date+'</td>'+
                                                 '</tr>'+
                                                 '<tr>'+
-                                                    '<th>의뢰 시작날짜</th>';
+                                                    '<th>개발 시작날짜</th>';
 
                         if(data[i].Working_start_date == null)
-                            will_be_append = will_be_append.concat('<td>의뢰가 시작되지 않음</td>');
+                            will_be_append = will_be_append.concat('<td>개발이 시작되지 않음</td>');
                         else
                             will_be_append = will_be_append.concat('<td>'+data[i].Working_start_date+'</td>');
 
-                        will_be_append = will_be_append.concat('</tr>'+'<tr>'+'<th>의뢰 마감날짜</th>');
+                        will_be_append = will_be_append.concat('</tr>'+'<tr>'+'<th>개발 종료날짜</th>');
 
                         if(data[i].Working_end_date == null)
-                            will_be_append = will_be_append.concat('<td>의뢰가 종료되지 않음</td>');
+                            will_be_append = will_be_append.concat('<td>개발이 종료되지 않음</td>');
                         else
                             will_be_append = will_be_append.concat('<td>'+data[i].Working_end_date+'</td>');
 
