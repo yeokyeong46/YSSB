@@ -32,10 +32,30 @@ router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>
     res.json({success: true});
 }));
 
-router.post('/freelancer_apply:Id', wrapper.asyncMiddleware(async (req, res, next) =>{
+router.post('/freelancer_apply/:Id', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Request_id = req.params.Id;
+    const Participant_id = req.body.Participant_id;
+    //query1 언어 요건 충족되면 아무것도 출력하지 않음
+    console.log("nth passed");
+    var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
+    var ret = await db.getQueryResult(query1);
+    console.log("query1 passed");
+    if (Object.keys(ret).length==0){
+      //query2 최소경력 충족되면 아무것도 출력하지 않음
+      console.log("언어요건충족");
+      var query2 = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = "+Request_id+" AND F.Career < R.Min_career;";
+      ret = await db.getQueryResult(query2);
+      if (Object.keys(ret).length==0){
+        console.log("최소경력충족");
+        var ret = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
+      }
+    }
+    res.json(ret);
+}));
+
+router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
-    const State = req.body.State;
     //query1 언어 요건 충족되면 아무것도 출력하지 않음
     console.log("nth passed");
     var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
@@ -50,7 +70,7 @@ router.post('/freelancer_apply:Id', wrapper.asyncMiddleware(async (req, res, nex
         console.log("최소경력충족");
         var query3 = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
         if (Object.keys(query3).length !=0){
-          var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"');");
+          var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
           var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
           console.log(ret);
         }
