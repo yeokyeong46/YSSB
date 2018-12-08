@@ -304,15 +304,16 @@
                 type: 'get',
                 url: '/get_request_info/freelancer_apply/'+Id,
                 success: function(data) {
+                    console.log(data);
                     $('#apply_visible tbody').html("");
-                    if (data.length == 0) { //자격 만족, 구인 중 상태
-                      var will_be_append = '<tr>';
-                      var user_id = <%-JSON.stringify(sess_id)%>;
-                      <% if (sess_level==2) { %> //사용자가 프리랜서
-                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="apply_request(\''+user_id+'\')" value="의뢰 신청"></td>');
-                      <% } %>
-                      will_be_append = will_be_append.concat('</tr>');
-                      $('#apply_visible tbody').append(will_be_append);
+                    if (data == "TRUE") { //자격 만족, 구인 중 상태
+                        var will_be_append = '<tr>';
+                        var user_id = <%-JSON.stringify(sess_id)%>;
+                        <% if (sess_level==2) { %> //사용자가 프리랜서
+                            will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="apply_request(\''+user_id+'\')" value="의뢰 신청"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#apply_visible tbody').append(will_be_append);
                     }
                 },
                 error: function(err) {

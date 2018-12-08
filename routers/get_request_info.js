@@ -6,7 +6,6 @@ const db = require('../modules/db');
 
 router.get('/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    console.log("hi");
     var user = await db.getQueryResult("SELECT Id, Title, Pay, Min_career, State, Client_id, DATE_FORMAT(Apply_start_date,'%Y-%m-%d') Apply_start_date, DATE_FORMAT(Apply_end_date,'%Y-%m-%d') Apply_end_date, DATE_FORMAT(Working_start_date,'%Y-%m-%d') Working_start_date, DATE_FORMAT(Working_end_date,'%Y-%m-%d') Working_end_date FROM request WHERE Id="+Id);
     //console.log('-------------------------------');
     //console.log(JSON.stringify(user, null, 2));
@@ -32,25 +31,33 @@ router.post('/delete_request', wrapper.asyncMiddleware(async (req, res, next) =>
     res.json({success: true});
 }));
 
-router.post('/freelancer_apply/:Id', wrapper.asyncMiddleware(async (req, res, next) =>{
+router.get('/freelancer_apply/:Id', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.params.Id;
-    const Participant_id = req.body.Participant_id;
-    //query1 언어 요건 충족되면 아무것도 출력하지 않음
-    console.log("nth passed");
-    var query1 = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
-    var ret = await db.getQueryResult(query1);
-    console.log("query1 passed");
-    if (Object.keys(ret).length==0){
-      //query2 최소경력 충족되면 아무것도 출력하지 않음
-      console.log("언어요건충족");
-      var query2 = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = "+Request_id+" AND F.Career < R.Min_career;";
-      ret = await db.getQueryResult(query2);
-      if (Object.keys(ret).length==0){
-        console.log("최소경력충족");
-        var ret = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
-      }
+    const Participant_id = req.session.curr_id;//req.body.Participant_id;
+    var msg = "FALSE";
+
+    var retR = await db.getQueryResult("SELECT Id FROM request WHERE Id="+Request_id+" AND State = 'APPLIABLE';");
+    console.log(retR);
+    if(Object.keys(retR).length==0){ // 의뢰가 모집중이 아님: 거절
+        res.send(msg);
     }
-    res.json(ret);
+    else{
+        //queryPL 언어 요건 충족되면 아무것도 출력하지 않음
+        var queryPL = "WITH Temp as (SELECT R.Language FROM REQUEST_LANGUAGE_SKILL as R, FREELANCER_LANGUAGE_SKILL as F WHERE R.Request_id="+Request_id+" and F.Freelancer_id='"+Participant_id+"' and R.Language = F.Language and R.Level <= F.Level) SELECT * FROM REQUEST_LANGUAGE_SKILL as R2 LEFT JOIN Temp ON Temp.Language = R2.Language WHERE R2.Request_id = "+Request_id+" and Temp.Language is NULL;";
+        var retPL = await db.getQueryResult(queryPL);
+
+        if (Object.keys(retPL).length==0){    // 언어요건 충족 확인
+            //queryCR 최소경력 충족되면 아무것도 출력하지 않음
+            console.log("언어요건충족");
+            var queryCR = "SELECT F.Career FROM Freelancer as F, Request as R WHERE R.Id = "+Request_id+" AND F.Id = '"+Participant_id+"' AND F.Career < R.Min_career;";
+            var retCR = await db.getQueryResult(queryCR);
+            if (Object.keys(retCR).length==0){ // 최소 경력 충족 확인
+                console.log("최소경력충족");
+                msg = "TRUE";
+            }
+        }
+        res.send(msg);
+    }
 }));
 
 router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
