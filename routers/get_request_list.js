@@ -10,7 +10,6 @@ router.get('/', wrapper.asyncMiddleware(async (req, res, next) => {
   //console.log(JSON.stringify(user, null, 2));
 	//console.log('-------------------------------');
   res.json(user);
-  console.log(sess_id);
 }));
 
 router.get('/get_offering_request', wrapper.asyncMiddleware(async (req, res, next) => {
