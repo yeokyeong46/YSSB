@@ -98,9 +98,9 @@
           <h3>의뢰 신청</h3>
           <table>
             <tbody>
-              <td>
+              <!--<td>
                 <input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청">
-              </td>
+              </td>-->
             </tbody>
           </table>
         </div>
@@ -272,7 +272,6 @@
                                                                     '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
                                                                 '</tr>');
                         var user_id = <%-JSON.stringify(sess_id)%>;
-
                         if (user_id == Cid) {
                             console.log(data[i].Title);
                         }
@@ -302,20 +301,24 @@
             });
 
             $.ajax({
-               type: 'get',
-               url: '/get_request_info/freelancer_apply/'+Id,
-               success: function(data) {
-                   if (data.length == 0) { //자격 만족, 구인 중 상태
-                     var user_id = <%-JSON.stringify(sess_id)%>;
-                     <% if (sess_level==2) { %> //사용자가 프리랜서
-                         document.getElementById('apply_visible').style.display = "block";
-                     <% } %>
-                   }
-               },
-               error: function(err) {
-                   console.log(err);
-               }
-           });
+                type: 'get',
+                url: '/get_request_info/freelancer_apply/'+Id,
+                success: function(data) {
+                    $('#apply_visible tbody').html("");
+                    if (data.length == 0) { //자격 만족, 구인 중 상태
+                      var will_be_append = '<tr>';
+                      var user_id = <%-JSON.stringify(sess_id)%>;
+                      <% if (sess_level==2) { %> //사용자가 프리랜서
+                          will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="apply_request(\''+user_id+'\')" value="의뢰 신청"></td>');
+                      <% } %>
+                      will_be_append = will_be_append.concat('</tr>');
+                      $('#apply_visible tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
 
             $.ajax({
                 type: 'get',
@@ -484,15 +487,14 @@
         function view_message_button() {
           window.location="/view_message/"+Id;
         }
-        function apply_request(){
+        function apply_request(Participant_id){
             var v = {
                     Request_id : Id,
-                    Participant_id : <%=sess_id%>,
-                    State : "WAITING"
+                    Participant_id : Participant_id
                 }
             $.ajax({
                 type: 'post',
-                url: '/get_request_info/freelancer_apply',
+                url: '/get_request_info/apply_request',
                 data: v,
                 success: function(data) {
                     window.location="/request_info/"+Id;
