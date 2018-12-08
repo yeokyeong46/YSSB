@@ -192,6 +192,19 @@
             </tbody>
         </table>
 
+        <table class="table table-striped" id="rejected_submit">
+            <caption>거절된 완료 요청</caption>
+            <thead>
+                <tr>
+                    <th>Request Title</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
         <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
@@ -321,6 +334,27 @@
 
             $.ajax({
                 type: 'get',
+                url: '/get_freelancer_profile/get_rejected_submit_list/'+Id,
+                success: function(data) {
+                    $('#rejected_submit tbody').html("");
+                    for(var i = 0 ; i < data.length; i ++) {
+                        var will_be_append = '<tr>'+
+                                                    '<td><a href="/request_info/'+data[i].Request_id+'">'+data[i].Title+'</a></td>'+
+                                                    '<td>'+data[i].Date+'</td>';
+                        <% if (sess_level==0) { %>
+                        will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_rejected_submit(\''+data[i].Id+'\')" value="-"></td>');
+                        <% } %>
+                        will_be_append = will_be_append.concat('</tr>');
+                        $('#rejected_submit tbody').append(will_be_append);
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+
+            $.ajax({
+                type: 'get',
                 url: '/get_freelancer_profile/get_language/'+Id,
                 success: function(data) {
                     $('#language tbody').html("");
@@ -393,6 +427,23 @@
             $.ajax({
                 type: 'post',
                 url: "/get_freelancer_profile/delete_portfolio",
+                data: v,
+                success: function(data) {
+                    window.location="/freelancer_profile/"+Id;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function delete_rejected_submit(id){
+            var v = {
+                    rejected_submit_id : id
+                }
+            $.ajax({
+                type: 'post',
+                url: "/get_freelancer_profile/delete_rejected_submit",
                 data: v,
                 success: function(data) {
                     window.location="/freelancer_profile/"+Id;

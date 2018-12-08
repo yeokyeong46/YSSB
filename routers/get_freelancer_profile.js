@@ -28,6 +28,12 @@ router.get('/get_apply_list/:Id', wrapper.asyncMiddleware(async (req, res, next)
     res.json(user);
 }));
 
+router.get('/get_rejected_submit_list/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
+    var Id = req.params.Id;
+    var user = await db.getQueryResult("SELECT RS.Id, RS.Request_id, DATE_FORMAT(RS.Date,'%Y-%m-%d') Date, R.Title FROM REJECTED_SUBMIT AS RS, REQUEST AS R WHERE RS.Participant_id='"+Id+"' AND RS.Request_id=R.Id");
+    res.json(user);
+}));
+
 router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
     var user = await db.getQueryResult("SELECT Language, Level FROM freelancer_language_skill WHERE Freelancer_id='"+Id+"'");
@@ -66,6 +72,13 @@ router.post('/delete_portfolio', wrapper.asyncMiddleware(async (req, res, next) 
     const Id = req.body.id;
     const portfolio_id = req.body.portfolio_id;
     var ret = await db.getQueryResult("DELETE FROM portfolio WHERE Freelancer_id='"+Id+"' and Portfolio_id='"+portfolio_id+"'");
+    console.log(ret);
+    res.json({success: true});
+}));
+
+router.post('/delete_rejected_submit', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.rejected_submit_id;
+    var ret = await db.getQueryResult("DELETE FROM rejected_submit WHERE Id="+Id);
     console.log(ret);
     res.json({success: true});
 }));
