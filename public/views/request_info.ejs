@@ -266,11 +266,20 @@
                         else
                             will_be_append = will_be_append.concat('<td>'+data[i].Working_end_date+'</td>');
 
-                        will_be_append = will_be_append.concat( '</tr>'+
-                                                                '<tr>'+
-                                                                    '<th>Client</th>'+
-                                                                    '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
-                                                                '</tr>');
+                        if(data[i].Client_id!=null) {
+                            will_be_append = will_be_append.concat( '</tr>'+
+                                                                    '<tr>'+
+                                                                        '<th>Client</th>'+
+                                                                        '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
+                                                                    '</tr>');
+                        }
+                        else {
+                            will_be_append = will_be_append.concat( '</tr>'+
+                                                                    '<tr>'+
+                                                                        '<th>Client</th>'+
+                                                                        '<td>탈퇴한 클라언트</td>'+
+                                                                    '</tr>');
+                            }
                         var user_id = <%-JSON.stringify(sess_id)%>;
                         if (user_id == Cid) {
                             console.log(data[i].Title);
