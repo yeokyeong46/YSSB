@@ -128,7 +128,7 @@
                             <option value="mySql">mySql</option>
                             <option value="Ruby">Ruby</option>
                         </select>
-                        <input type="radio" name="signup_skill[0]" value="1">1
+                        <input type="radio" name="signup_skill[0]" value="1" required>1
                         <input type="radio" name="signup_skill[0]" value="2">2
                         <input type="radio" name="signup_skill[0]" value="3">3
                         <input type="radio" name="signup_skill[0]" value="4">4
@@ -203,9 +203,6 @@
             // 첨부 파일 갯수 확인
             var file_num = $('#files')[0].files.length;
             document.getElementById("signup_file_num").value = file_num;
-            // - - - - - - - - - - - - - - - - - - - - //
-            // empty 문자 있으면 거절
-            // - - - - - - - - - - - - - - - - - - - - //
 
         });
 
