@@ -202,10 +202,6 @@
 
             // 첨부 파일 갯수 확인
             var file_num = $('#files')[0].files.length;
-            if(file_num>5){
-                alert('의뢰 스펙 문서는 최대 5개까지만 첨부 가능합니다.');
-                return false;
-            }
             document.getElementById("signup_file_num").value = file_num;
             // - - - - - - - - - - - - - - - - - - - - //
             // empty 문자 있으면 거절
