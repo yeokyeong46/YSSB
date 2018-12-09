@@ -64,14 +64,38 @@ router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
     // 어플라이 버튼이 보이는거면 조건이 이미 충족된 상태이므로 바로 신청 가능
-    var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
+    // 이전에 신청한 이력이 있는지 확인 부터 한다.
+    var tmp_ret = await db.getQueryResult("SELECT State FROM apply WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+    if(Object.keys(tmp_ret).length==0)
+        var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
+    else
+        var ret = await db.getQueryResult("UPDATE APPLY set State='WAITING'");
     res.json(ret);
 }));
 
 router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT RL.Language AS Language, RL.Level AS Level, R.Client_id AS Client_id FROM request_language_skill RL, request R WHERE RL.Request_id="+Id+" AND R.Id="+Id);
+    var user = await db.getQueryResult("SELECT RL.Language AS Language, RL.Level AS Level, R.Client_id AS Client_id, R.State As State FROM request_language_skill RL, request R WHERE RL.Request_id="+Id+" AND R.Id="+Id);
     res.json(user);
+}));
+
+router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const language = req.body.language;
+    const level = req.body.level;
+    // db에 존재하는 언어이면 update, 아니면 insert
+    var tmp_ret = await db.getQueryResult("SELECT Language FROM request_language_skill WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    console.log(tmp_ret);
+    var ret;
+    if (Object.keys(tmp_ret).length==0) {
+        ret = await db.getQueryResult("INSERT INTO request_language_skill(Request_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
+    }
+    else {
+        ret = await db.getQueryResult("UPDATE request_language_skill SET level="+level+" WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    }
+    console.log(ret);
+    console.log(typeof ret);
+    res.json(ret);
 }));
 
 router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =>{
@@ -84,7 +108,7 @@ router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =
 
 router.get('/get_request_file/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT RF.File_id AS File_id, R.Client_id AS Client_id FROM request_file RF, request R WHERE RF.Request_id="+Id+" AND R.Id="+Id);
+    var user = await db.getQueryResult("SELECT RF.File_id AS File_id, R.Client_id AS Client_id, R.State AS State FROM request_file RF, request R WHERE RF.Request_id="+Id+" AND R.Id="+Id);
     res.json(user);
 }));
 
@@ -213,7 +237,7 @@ router.post('/rate_client', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Cid = req.body.Cid;
     const Rate = req.body.Rate;
     var ret2 = await db.getQueryResult("UPDATE request SET Cscore="+Rate+" WHERE Id="+Rid);
-    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Client_id='"+Cid+"')");
+    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE State='COMPLETED' AND Client_id='"+Cid+"'");
     const Nrate = new_rate[0]['AVG(Cscore)'];
     var ret = await db.getQueryResult("UPDATE client SET Score="+Nrate+" WHERE Id='"+Cid+"'");
     console.log(ret);

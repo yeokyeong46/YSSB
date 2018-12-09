@@ -266,11 +266,20 @@
                         else
                             will_be_append = will_be_append.concat('<td>'+data[i].Working_end_date+'</td>');
 
-                        will_be_append = will_be_append.concat( '</tr>'+
-                                                                '<tr>'+
-                                                                    '<th>Client</th>'+
-                                                                    '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
-                                                                '</tr>');
+                        if(data[i].Client_id!=null) {
+                            will_be_append = will_be_append.concat( '</tr>'+
+                                                                    '<tr>'+
+                                                                        '<th>Client</th>'+
+                                                                        '<td><a href="/client_profile/'+data[i].Client_id+'">'+data[i].Client_id+'</a></td>'+
+                                                                    '</tr>');
+                        }
+                        else {
+                            will_be_append = will_be_append.concat( '</tr>'+
+                                                                    '<tr>'+
+                                                                        '<th>Client</th>'+
+                                                                        '<td>탈퇴한 클라이언트</td>'+
+                                                                    '</tr>');
+                            }
                         var user_id = <%-JSON.stringify(sess_id)%>;
                         if (user_id == Cid) {
                             console.log(data[i].Title);
@@ -331,7 +340,7 @@
                                                     '<td>'+data[i].Language+'</td>'+
                                                     '<td>'+data[i].Level+'</td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Client_id || user_id=='admin') {
+                        if ((user_id == data[i].Client_id || user_id=='admin') && data[i].State=='APPLIABLE') {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="요건 삭제"></td>');
                         }
                         will_be_append = will_be_append.concat('</tr>');
@@ -352,7 +361,7 @@
                         var will_be_append = '<tr>'+
                                                       '<td><a href="/view_file/req_spec/'+Id+'_'+data[i].File_id+'">'+data[i].File_id+'</a></td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Client_id || user_id=='admin') {
+                        if ((user_id == data[i].Client_id || user_id=='admin') && data[i].State=='APPLIABLE') {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_file(\''+data[i].File_id+'\')" value="파일 삭제"></td>');
                         }
                         will_be_append = will_be_append.concat('</tr>');
@@ -386,7 +395,7 @@
                             else if (data[i].State == 'COMPLETED') {
                               will_be_append = will_be_append.concat('<td>이미 수락</td>');
                               will_be_append = will_be_append.concat('<td>-</td>');
-                              will_be_append = will_be_append.concat('<td><form class="form-inline"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2</form><input type="radio" name="rate" value="3">3</form><input type="radio" name="rate" value="4">4</form><input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_freelancer(\''+data[i].Pid+'\')" value="RATE"></form></td>');
+                              will_be_append = will_be_append.concat('<td><form class="form-inline"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2<input type="radio" name="rate" value="3">3<input type="radio" name="rate" value="4">4<input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_freelancer(\''+data[i].Pid+'\')" value="RATE"></form></td>');
                             }
                         }
                         if (user_id == data[i].Pid) {
@@ -395,7 +404,7 @@
                               will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="view_message_button()" value="메시지 보기"></td>');
                               will_be_append = will_be_append.concat('<td>권한 없음</td>');
                               will_be_append = will_be_append.concat('<td>권한 없음</td>');
-                              will_be_append = will_be_append.concat('<td><form class="form-inline" id="rate_client"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2</form><input type="radio" name="rate" value="3">3</form><input type="radio" name="rate" value="4">4</form><input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_client(\''+data[i].Cid+'\')" value="RATE"></form></td>');
+                              will_be_append = will_be_append.concat('<td><form class="form-inline" id="rate_client"><input type="radio" name="rate" value="1">1<input type="radio" name="rate" value="2">2<input type="radio" name="rate" value="3">3<input type="radio" name="rate" value="4">4<input type="radio" name="rate" value="5">5<input type="submit" class="btn btn-default" onclick="rate_client(\''+data[i].Cid+'\')" value="RATE"></form></td>');
                             }
                             else {
                               will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="completed_request(\''+data[i].Pid+'\')" value="수행완료"></td>');
