@@ -70,8 +70,27 @@ router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
 
 router.get('/get_language/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT RL.Language AS Language, RL.Level AS Level, R.Client_id AS Client_id FROM request_language_skill RL, request R WHERE RL.Request_id="+Id+" AND R.Id="+Id);
+    var user = await db.getQueryResult("SELECT RL.Language AS Language, RL.Level AS Level, R.Client_id AS Client_id, R.State As State FROM request_language_skill RL, request R WHERE RL.Request_id="+Id+" AND R.Id="+Id);
     res.json(user);
+}));
+
+router.post('/add_language', wrapper.asyncMiddleware(async (req, res, next) =>{
+    const Id = req.body.id;
+    const language = req.body.language;
+    const level = req.body.level;
+    // db에 존재하는 언어이면 update, 아니면 insert
+    var tmp_ret = await db.getQueryResult("SELECT Language FROM request_language_skill WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    console.log(tmp_ret);
+    var ret;
+    if (Object.keys(tmp_ret).length==0) {
+        ret = await db.getQueryResult("INSERT INTO request_language_skill(Request_id,Language,Level) VALUES('"+Id+"','"+language+"',"+level+")");
+    }
+    else {
+        ret = await db.getQueryResult("UPDATE request_language_skill SET level="+level+" WHERE Request_id='"+Id+"' AND Language='"+language+"'");
+    }
+    console.log(ret);
+    console.log(typeof ret);
+    res.json(ret);
 }));
 
 router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =>{
@@ -84,7 +103,7 @@ router.post('/delete_language', wrapper.asyncMiddleware(async (req, res, next) =
 
 router.get('/get_request_file/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
-    var user = await db.getQueryResult("SELECT RF.File_id AS File_id, R.Client_id AS Client_id FROM request_file RF, request R WHERE RF.Request_id="+Id+" AND R.Id="+Id);
+    var user = await db.getQueryResult("SELECT RF.File_id AS File_id, R.Client_id AS Client_id, R.State AS State FROM request_file RF, request R WHERE RF.Request_id="+Id+" AND R.Id="+Id);
     res.json(user);
 }));
 

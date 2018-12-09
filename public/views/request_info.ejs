@@ -340,7 +340,7 @@
                                                     '<td>'+data[i].Language+'</td>'+
                                                     '<td>'+data[i].Level+'</td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Client_id || user_id=='admin') {
+                        if ((user_id == data[i].Client_id || user_id=='admin') && data[i].State=='APPLIABLE') {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_language(\''+data[i].Language+'\')" value="요건 삭제"></td>');
                         }
                         will_be_append = will_be_append.concat('</tr>');
@@ -361,7 +361,7 @@
                         var will_be_append = '<tr>'+
                                                       '<td><a href="/view_file/req_spec/'+Id+'_'+data[i].File_id+'">'+data[i].File_id+'</a></td>';
                         var user_id = <%-JSON.stringify(sess_id)%>;
-                        if (user_id == data[i].Client_id || user_id=='admin') {
+                        if ((user_id == data[i].Client_id || user_id=='admin') && data[i].State=='APPLIABLE') {
                             will_be_append = will_be_append.concat('<td><input type="button" class="btn btn-default" onclick="delete_request_file(\''+data[i].File_id+'\')" value="파일 삭제"></td>');
                         }
                         will_be_append = will_be_append.concat('</tr>');
