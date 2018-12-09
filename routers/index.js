@@ -163,7 +163,7 @@ router.get('/freelancer_profile/:id', (req,res,next) => {
 router.get('/view_file/:folder/:name', function(req, res){
   var tempFile='./public/upload/'+req.params.folder+'/'+req.params.name;
   fs.readFile(tempFile, function (err,data){
-    res.contentType("application/pdf");
+    res.contentType("application/octet-stream");
     res.send(data);
   });
 });
