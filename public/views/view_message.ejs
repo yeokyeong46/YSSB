@@ -63,6 +63,12 @@
         </div><!-- /.container-fluid -->
       </nav>
     <body>
+        <% if(!sess_id){ %>
+          <script type="text/javascript">
+              alert('로그인을 먼저 해주세요.');
+              window.location.href = '/';
+          </script>
+        <% } %>
         <h3>의뢰 거부 메시지</h3>
 
         <div>

@@ -121,7 +121,12 @@
   </nav>
 
   <body>
-
+    <% if(!sess_id){ %>
+      <script type="text/javascript">
+          alert('로그인을 먼저 해주세요.');
+          window.location.href = '/';
+      </script>
+    <% } %>
     <h3>  Request List</h3>
 
     <% if (sess_level==1) { %>

@@ -73,7 +73,12 @@
       </div><!-- /.container-fluid -->
     </nav>
     <body>
-
+        <% if(!sess_id){ %>
+          <script type="text/javascript">
+              alert('로그인을 먼저 해주세요.');
+              window.location.href = '/';
+          </script>
+        <% } %>
         <div id="basic_info">
           <h3>의뢰 정보</h3>
           <table style="width :100%;" class="table table-striped">
