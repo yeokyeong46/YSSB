@@ -79,6 +79,7 @@
               <thead>
                   <tr>
                       <th>메시지 번호</th>
+                      <th>송신자 아이디</th>
                       <th>메시지 내용</th>
                   </tr>
               </thead>
@@ -103,7 +104,8 @@
             $('#send_message').submit(function(){
                 var v = {
                         id: request_id,
-                        value: $("#new_message").val()
+                        value: $("#new_message").val(),
+                        sender_id : <%-JSON.stringify(sess_id)%>
                     }
                 $.ajax({
                     type: 'post',
@@ -126,6 +128,7 @@
                     for(var i = 0 ; i < data.length; i ++) {
                         var will_be_append = $('<tr>'+
                                                     '<td>'+data[i].Id+'</td>'+
+                                                    '<td>'+data[i].Sender_id+'</td>'+
                                                     '<td>'+data[i].Contents+'</td>'+
                                                 '</tr>');
                         $('#message tbody').append(will_be_append);
