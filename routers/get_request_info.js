@@ -64,7 +64,12 @@ router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Request_id = req.body.Request_id;
     const Participant_id = req.body.Participant_id;
     // 어플라이 버튼이 보이는거면 조건이 이미 충족된 상태이므로 바로 신청 가능
-    var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
+    // 이전에 신청한 이력이 있는지 확인 부터 한다.
+    var tmp_ret = await db.getQueryResult("SELECT State FROM apply WHERE Request_id="+Request_id+" AND Participant_id='"+Participant_id+"'");
+    if(Object.keys(tmp_ret).length==0)
+        var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
+    else
+        var ret = await db.getQueryResult("UPDATE APPLY set State='WAITING'");
     res.json(ret);
 }));
 
@@ -232,7 +237,7 @@ router.post('/rate_client', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Cid = req.body.Cid;
     const Rate = req.body.Rate;
     var ret2 = await db.getQueryResult("UPDATE request SET Cscore="+Rate+" WHERE Id="+Rid);
-    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE Id in (SELECT Request_id FROM work WHERE State='COMPLETED' AND Client_id='"+Cid+"')");
+    var new_rate = await db.getQueryResult("SELECT AVG(Cscore) FROM request WHERE State='COMPLETED' AND Client_id='"+Cid+"'");
     const Nrate = new_rate[0]['AVG(Cscore)'];
     var ret = await db.getQueryResult("UPDATE client SET Score="+Nrate+" WHERE Id='"+Cid+"'");
     console.log(ret);
