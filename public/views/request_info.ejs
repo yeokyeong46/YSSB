@@ -103,9 +103,6 @@
           <h3>의뢰 신청</h3>
           <table>
             <tbody>
-              <!--<td>
-                <input type="button" class="btn btn-default" onclick="apply_request()" value="의뢰 신청">
-              </td>-->
             </tbody>
           </table>
         </div>
@@ -116,7 +113,6 @@
                 <tr>
                     <th>Language</th>
                     <th>level</th>
-                    <!--권한 설정 필요-->
                     <th></th>
                 </tr>
             </thead>
@@ -154,7 +150,6 @@
             <thead>
                 <tr>
                     <th>Title</th>
-                    <!--권한 설정 필요-->
                     <th></th>
                 </tr>
             </thead>
@@ -162,7 +157,6 @@
             </tbody>
         </table>
 
-        <!-- 권한 설정 필요 -->
         <div id="add_req_spec">
             <!--action="/file_upload/add_req_spec" method="POST"-->
             <form  action="/file_upload/add_req_spec" method="POST" class="form-inline"enctype="multipart/form-data">
@@ -433,6 +427,7 @@
                     console.log(err);
                 }
             });
+
             $.ajax({
                 type: 'get',
                 url: '/get_request_info/get_applier_list/'+Id,
@@ -683,7 +678,6 @@
                 }
             });
         }
-
         function delete_request_file(File_id){
             var v = {
                     id: Id,
@@ -701,25 +695,6 @@
                 }
             });
         }
-        /*
-        $('#add_req_spec').submit(function(){
-            var formData = new FormData(this);
-            $.ajax({
-                type: 'post',
-                url: '/file_upload/add_req_spec',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                    window.location="/request_info/"+Id;
-                },
-                error: function(err) {
-                    console.log(err);
-                }
-            });
-        });
-        */
-
     </script>
 
 </html>

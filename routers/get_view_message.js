@@ -22,9 +22,6 @@ router.post('/send_message', wrapper.asyncMiddleware(async (req, res, next) =>{
 router.get('/view_message/:request_id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Rid = req.params.request_id;
     var user = await db.getQueryResult("SELECT Id, Sender_id, Contents FROM message WHERE Request_id='"+Rid+"'");
-    //console.log('-------------------------------');
-    //console.log(JSON.stringify(user, null, 2));
-        //console.log('-------------------------------');
     res.json(user);
 }));
 
