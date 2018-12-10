@@ -131,7 +131,7 @@ const storage_ptf = multer.diskStorage({
         portfolio_id = max+1;
     else
         portfolio_id = 1;
-    console.log(portfolio_id);
+
     var query2 = "INSERT INTO portfolio(Freelancer_id,Portfolio_id,Type,External_file) VALUES('"+req.body.freelancer_id+"',"+portfolio_id+",1,'"+file.originalname+"')";
     var ret2 = await db.getQueryResult(query2);
 
@@ -183,7 +183,6 @@ router.post('/req_spec_from_write', up_spec_from_write, (req, res, next) => {
 });
 
 router.post('/ptf_from_signup', up_ptf_from_signup, wrapper.asyncMiddleware(async (req, res, next) => {
-  console.log(req.body);
   if(req.body.signup_file_num == 0){
     var id = req.body.signup_id;
     var pwd = req.body.signup_pwd;
@@ -223,7 +222,6 @@ router.post('/portfolio', up_ptf, (req, res, next) => {
 });
 
 router.post('/add_req_spec', up_add_req_spec, (req, res, next) => {
-  console.log(req);
   res.redirect('/request_info/'+req.body.request_id);
 });
 

@@ -113,8 +113,6 @@ router.post('/signup_client', wrapper.asyncMiddleware(async (req, res, next) => 
   var queryC = "INSERT INTO CLIENT (Id, Password, Name, Phone) VALUES ('"+id+"', SHA2('"+pwd+"', "+config.db_config.length+"), '"+name+"', '"+phone+"');";
   var resultC = await db.getQueryResult(queryC);
 
-  //console.log(resultC);
-
   var msg = '<script type="text/javascript">alert("새로운 클라이언트가 되었습니다! 로그인해주세요.");window.location.href="/login"</script>';
   res.send(msg);
 
@@ -174,7 +172,6 @@ router.get('/request_list', (req, res, next) => {
     sess_level: req.session.auth_level,
     sess_id: req.session.curr_id
   });
-  console.log(req.session);
 });
 router.get('/request_info/:id', (req,res,next) => {
   res.render('request_info',{
@@ -182,7 +179,6 @@ router.get('/request_info/:id', (req,res,next) => {
     sess_id: req.session.curr_id,
     sess_page_id: req.params.id
   });
-  console.log(req.session);
 });
 router.get('/view_message/:id', (req,res,next) => {
   res.render('view_message',{
@@ -190,6 +186,5 @@ router.get('/view_message/:id', (req,res,next) => {
     sess_id: req.session.curr_id,
     sess_page_id: req.params.id
   });
-  console.log(req.session);
 });
 module.exports = router;

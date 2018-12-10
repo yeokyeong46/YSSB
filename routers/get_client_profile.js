@@ -37,7 +37,7 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
         var ret = await db.getQueryResult("UPDATE client SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
     else
         var ret = await db.getQueryResult("UPDATE client SET Password=SHA2('"+value+"', "+config.db_config.length+") WHERE Id='"+Id+"'");
-    console.log(ret);
+    //console.log(ret);
     res.json({success: true});
 }));
 
