@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const wrapper = require('../modules/wrapper');
 const db = require('../modules/db');
+const config = require('../config');
 
 router.get('/get_profile/:Id', wrapper.asyncMiddleware(async (req, res, next) => {
     var Id = req.params.Id;
@@ -32,7 +33,10 @@ router.post('/update', wrapper.asyncMiddleware(async (req, res, next) =>{
     const Id = req.body.id;
     const attr = req.body.attr;
     const value = req.body.value;
-    var ret = await db.getQueryResult("UPDATE client SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
+    if (attr!="Password")
+        var ret = await db.getQueryResult("UPDATE client SET "+attr+"='"+value+"' WHERE Id='"+Id+"'");
+    else
+        var ret = await db.getQueryResult("UPDATE client SET Password=SHA2('"+value+"', "+config.db_config.length+") WHERE Id='"+Id+"'");
     console.log(ret);
     res.json({success: true});
 }));

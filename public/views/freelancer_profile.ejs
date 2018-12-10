@@ -85,6 +85,9 @@
                     <option value="Career">Career</option>
                     <option value="Major">Major</option>
                     <option value="Phone">Phone</option>
+                    <% if (sess_id==sess_page_id) { %>
+                    <option value="Password">Password</option>
+                    <% } %>
                 </select>
                 <input type="text" class="form-control" id="update_value" placeholder="new value">
                 <input type="submit" class="btn btn-default" value="UPDATE">
