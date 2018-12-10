@@ -85,8 +85,11 @@
                     <option value="Career">Career</option>
                     <option value="Major">Major</option>
                     <option value="Phone">Phone</option>
+                    <% if (sess_id==sess_page_id) { %>
+                    <option value="Password">Password</option>
+                    <% } %>
                 </select>
-                <input type="text" class="form-control" id="update_value" placeholder="new value">
+                <input type="text" class="form-control" id="update_value" placeholder="new value" required>
                 <input type="submit" class="btn btn-default" value="UPDATE">
             </form>
         </div> 
@@ -125,7 +128,7 @@
                 <option value="mySql">mySql</option>
                 <option value="Ruby">Ruby</option>
             </select>
-            <input type="radio" name="skill" value="1">1
+            <input type="radio" name="skill" value="1" required>1
             <input type="radio" name="skill" value="2">2
             <input type="radio" name="skill" value="3">3
             <input type="radio" name="skill" value="4">4
