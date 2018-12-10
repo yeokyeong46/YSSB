@@ -1,5 +1,3 @@
-// from comit: ae5e25e80fbcddcf937db5bb94285aead83c0d55
-
 'use strict';
 const express = require('express');
 const router = express.Router();
@@ -61,7 +59,7 @@ router.post('/apply_request', wrapper.asyncMiddleware(async (req, res, next) =>{
     if(Object.keys(tmp_ret).length==0)
         var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', 'WAITING');");
     else
-        var ret = await db.getQueryResult("UPDATE APPLY set State='WAITING'");
+        var ret = await db.getQueryResult("UPDATE APPLY set State='WAITING' WHERE Participant_id='"+Participant_id+"' AND Request_id="+Request_id+";");
     res.json(ret);
 }));
 
@@ -216,13 +214,4 @@ router.post('/rate_client', wrapper.asyncMiddleware(async (req, res, next) =>{
     res.json(ret);
 }));
 
-router.post('/apply', wrapper.asyncMiddleware(async (req, res, next) =>{
-    const Request_id = req.body.Request_id;
-    const Participant_id = req.body.Participant_id;
-    const State = req.body.State;
-
-    var ret = await db.getQueryResult("Insert INTO APPLY (Request_id, Participant_id, State)  VALUES ('"+Request_id+"', '"+Participant_id+"', '"+State+"')");
-    var ret2 = await db.getQueryResult("UPDATE request SET State='WORKING' WHERE Id="+Request_id);
-    res.json({success: true});
-}));
 module.exports = router;
