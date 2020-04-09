@@ -3,7 +3,7 @@
 
 ### Abstract <hr/>
 ##### Team YSSB(약수역 스타벅스)
-> 2015147508 한채연, 2015147537 황규린, 2015147558 권여경
+> 한채연, 황규린, 권여경
 
 ###### CS3105-01 Fall Database Final Team Project in Computer Science, Yonsei University
 
