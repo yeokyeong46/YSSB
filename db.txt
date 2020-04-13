@@ -1,38 +1,0 @@
-#<TEAM 없는 버전> create schema no_team; use no_team; create table ADMINISTRATOR ( 
-Id char(15) not null, Password varbinary(64) not null, Name char(40) not null, primary key (Id) 
-); 
-create table FREELANCER( # 프리랜서는 work가 진행중이 아닐 때만 삭제됨 # delete 쿼리에서 where work.state 절로 확인 # 완료된 의뢰에 대해서는 삭제된 회원(null)으로 표기됨 (의뢰는 함께하는 사람들의 포트폴리오 
-때문에 삭제할 수 없음) # work, apply, language, portfolio table에서는 모두 지워짐 (내 work에 대해서는 지워져도 
-상관 없음) Id char(15) not null, Password varbinary(64) not null, Name char(40) not null, Age int not null, Career int default 0, Major char(40) not null, Phone char(13) not null, Score float default 6, primary key (Id) 
-); 
-create table FREELANCER_LANGUAGE_SKILL ( Freelancer_id char(15) not null, Language char(15) not null, Level int default 0, 
-primary key (Freelancer_id, Language), foreign key (Freelancer_id) references FREELANCER(Id) 
-on delete cascade ); 
-create table CLIENT ( # 클라이언트는 진행중인 의뢰를 가지고 있으면 삭제 불가능 # delete 쿼리에서 where request.state 절로 확인 # 클라이언트가 삭제되도 완료된 의뢰는 삭제되지 않음 # 클라이언트는 삭제된 회원으로 표시됨(null) Id char(15) not null, Password varbinary(64) not null, Name char(40) not null, Phone char(13) not null, Score float default 6, primary key (Id) 
-); 
-create table REQUEST ( # 시작이 되지 않은 = 모집중인 의뢰만 수정, 삭제 가능 Id int not null auto_increment, Client_id char(15), Title char(100) not null, Pay int not null, Apply_start_date date not null, Apply_end_date date not null, Working_start_date date, Working_end_date date, 
-Min_career int default 0, State char(9) default 'APPLIABLE', #'WORKING', 'COMPLETED' Cscore float default 6, Pscore float default 6, primary key (Id), foreign key (Client_id) references CLIENT(Id) 
-on delete set null ); 
-create table PORTFOLIO ( Freelancer_id char(15) not null, Portfolio_id int not null, Type bool not null, # 0-internal, 1-external Internal_request_id int, 
-External_file char(100), primary key (Freelancer_id,Portfolio_id), foreign key (Freelancer_id) references FREELANCER(Id) 
-on delete cascade, foreign key (Internal_request_id) references REQUEST(Id) 
-); 
-create table REQUEST_FILE ( Request_id int not null, File_id char(100) not null, primary key (Request_id,File_id), foreign key (Request_id) references REQUEST(Id) 
-on delete cascade ); 
-create table REQUEST_LANGUAGE_SKILL ( Request_id int not null, Language char(15) not null, Level int default 0, 
-primary key (Request_id,Language), foreign key (Request_id) references REQUEST(Id) 
-on delete cascade ); 
-create table APPLY ( Request_id int not null, Participant_id char(15) not null, State char(9) default 'WAITING', # 'ACCEPTED', 'REJECTED' primary key (Request_id, Participant_id), foreign key (Request_id) references REQUEST(Id) 
-on delete cascade, foreign key (Participant_id) references FREELANCER(Id) 
-on delete cascade ); 
-create table WORK ( Request_id int not null, Participant_id char(15), State char(9) default 'WORKING', # 'SUBMIT', 'COMPLETED' primary key (Request_id, Participant_id), 
-foreign key (Request_id) references REQUEST(Id), foreign key (Participant_id) references FREELANCER(Id) 
-on delete cascade ); 
-create table MESSAGE ( Id int not null, Request_id int not null, Sender_id char(15), Contents char(180), primary key (Id, Request_id), 
-foreign key (Request_id) references REQUEST(Id) 
-# 시작을 한 의뢰는 지울 수 없기 때문에 메세지가 존재하는 의뢰는 지워지지 않음 ); 
-create table REJECTED_SUBMIT ( Id int not null auto_increment, Request_id int not null, Participant_id char(15) not null, Date date not null, 
-primary key (Id), foreign key (Request_id) references REQUEST(Id) 
-on delete cascade, foreign key (Participant_id) references FREELANCER(Id) 
-on delete cascade ); 
-INSERT INTO ADMINISTRATOR (Id, Password, Name) VALUES ('admin', SHA2('admin', 256), 'yssb'); 
