@@ -3,7 +3,6 @@
 
 ### Abstract <hr/>
 ##### Team YSSB
-> 한채연, 황규린, 권여경
 
 <br><br/>
 ### Directory Structure <hr/>
